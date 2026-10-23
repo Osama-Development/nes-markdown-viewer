@@ -5,7 +5,7 @@ internals are excluded. File/UI functions load files and navigate; preprocess an
 render functions transform presentation; draft/state functions persist source;
 editing functions map and patch text; structure functions operate on selected spans.
 
-## NES_EDU_Markdown_Viewer_Final.html
+## NES_EDU_Markdown_Viewer_Visual_Edit_Final.html
 
 - `showToast()`
 - `initCollapsiblePanels()`
@@ -19,17 +19,19 @@ editing functions map and patch text; structure functions operate on selected sp
 - `persistDocument()`
 - `updateDraftStatus()`
 - `commitSourceEdit()`
+- `commitVisualEdit()`
 - `currentDocument()`
-- `pendingSourceEditor()`
+- `flushDocumentSave()`
 - `preprocessSlideMarkdown()`
 - `classifyToneClass()`
 - `renderFormattedDocument()`
 - `tokenizeSourceSpans()`
 - `nodeMatchesToken()`
+- `encodeInsertedText()`
+- `rawIndexForDisplayed()`
+- `mapEditableLeaves()`
+- `bindVisualEditor()`
 - `enableInlineEditing()`
-- `openBlockSourceEditor()`
-- `createSourceEditor()`
-- `openWholeFileEditor()`
 - `exportCurrentMarkdown()`
 - `setupScrollSpy()`
 - `highlightTOCItem()`

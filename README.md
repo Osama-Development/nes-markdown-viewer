@@ -1,8 +1,8 @@
-# NES EDU Markdown Viewer — preserved snapshot 4/6
+# NES EDU Markdown Viewer — preserved snapshot 5/6
 
-Bundles Marked; keeps original/source/exported document state, fingerprints drafts, saves browser drafts, and offers exact-source block/whole-file editing.
+Adds mapped visual text editing with escaped source patches and debounced draft saves; retains the Markdown source as document state.
 
-Open `NES_EDU_Markdown_Viewer_Final.html` in a modern browser and choose a local `.md`, `.markdown` or `.txt`
+Open `NES_EDU_Markdown_Viewer_Visual_Edit_Final.html` in a modern browser and choose a local `.md`, `.markdown` or `.txt`
 file. For registry-based fetching, serve this directory with
 `python3 -m http.server 8000` and open the HTML at `http://localhost:8000/`
 (URL-encode spaces). The registry's Markdown documents are not part of these
