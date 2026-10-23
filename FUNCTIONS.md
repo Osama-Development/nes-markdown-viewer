@@ -5,7 +5,7 @@ internals are excluded. File/UI functions load files and navigate; preprocess an
 render functions transform presentation; draft/state functions persist source;
 editing functions map and patch text; structure functions operate on selected spans.
 
-## NES_EDU_Markdown_Viewer_Visual_Edit_Final.html
+## NES_EDU_Markdown_Viewer_Complete_Final.html
 
 - `showToast()`
 - `initCollapsiblePanels()`
@@ -33,6 +33,23 @@ editing functions map and patch text; structure functions operate on selected sp
 - `bindVisualEditor()`
 - `enableInlineEditing()`
 - `exportCurrentMarkdown()`
+- `downloadMarkdownNamed()`
+- `toggleStructurePanel()`
+- `getSelectedSpan()`
+- `currentSelectedKind()`
+- `bindStructureSelection()`
+- `selectStructureBlock()`
+- `activateSelectedPosition()`
+- `updateStructureUI()`
+- `patchSourceRange()`
+- `newCardSource()`
+- `insertNewCard()`
+- `deleteSelectedCard()`
+- `changeCardMetadata()`
+- `insertNewHeading()`
+- `changeHeadingLevel()`
+- `insertedAtLineEnd()`
+- `insertStructuralLine()`
 - `setupScrollSpy()`
 - `highlightTOCItem()`
 - `scrollToSection()`
