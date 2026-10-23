@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NES EDU V3.14 | مستعرض نصوص الشرائح وملفات التوثيق</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Tajawal:wght@400;500;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        /* =========================================================
+           1. نظام الألوان والهوية البصرية (NES EDU V3.14)
+           ========================================================= */
+        :root {
+            --bg-body: #eef2f7;
+            --surface-card: #ffffff;
+            --surface-sec: #f8fafc;
+            --surface-tinted: #f1f5f9;
+
+            --border-light: #e2e8f0;
+            --border-medium: #cbd5e1;
+
+            --text-heading: #0f172a;
+            --text-body: #1e293b;
+            --text-muted: #64748b;
+
+            --nes-purple: #6d28d9;
+            --nes-purple-light: #7c3aed;
+            --nes-purple-bg: #f5f3ff;
+            --nes-purple-border: #ddd6fe;
+
+            --nes-blue: #1d4ed8;
+            --nes-blue-bg: #eff6ff;
+            --nes-blue-border: #bfdbfe;
+
+            --nes-teal: #0f766e;
+            --nes-teal-bg: #f0fdfa;
+            --nes-teal-border: #99f6e4;
+
+            --nes-amber: #b45309;
+            --nes-amber-bg: #fffbeb;
+            --nes-amber-border: #fde68a;
+
+            --nes-rose: #be123c;
+            --nes-rose-bg: #fff1f2;
+            --nes-rose-border: #fecdd3;
+
+            --radius-xl: 18px;
+            --radius-lg: 14px;
+            --radius-md: 10px;
+            --shadow-card: 0 10px 30px -5px rgba(15, 23, 42, 0.07), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+            --transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+            --reading-font-size: 1.05rem;
+        }
+
+        body.dark-mode {
+            --bg-body: #090d16;
+            --surface-card: #111827;
+            --surface-sec: #1e293b;
+            --surface-tinted: #0f172a;
+
+            --border-light: #1f2937;
+            --border-medium: #334155;
+
+            --text-heading: #f8fafc;
+            --text-body: #e2e8f0;
+            --text-muted: #94a3b8;
+
+            --nes-purple: #a78bfa;
+            --nes-purple-light: #8b5cf6;
+            --nes-purple-bg: rgba(139, 92, 246, 0.14);
+            --nes-purple-border: rgba(139, 92, 246, 0.3);
+
+            --nes-blue: #60a5fa;
+            --nes-blue-bg: rgba(59, 130, 246, 0.14);
+            --nes-blue-border: rgba(59, 130, 246, 0.3);
+
+            --nes-teal: #2dd4bf;
+            --nes-teal-bg: rgba(20, 184, 166, 0.14);
+            --nes-teal-border: rgba(20, 184, 166, 0.3);
+
+            --nes-amber: #fbbf24;
+            --nes-amber-bg: rgba(245, 158, 11, 0.14);
+            --nes-amber-border: rgba(245, 158, 11, 0.3);
+
+            --nes-rose: #fb7185;
+            --nes-rose-bg: rgba(244, 63, 94, 0.14);
+            --nes-rose-border: rgba(244, 63, 94, 0.3);
+
+            --shadow-card: 0 12px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-body);
+            line-height: 1.85;
+            transition: background-color 0.25s ease, color 0.25s ease;
+        }
+
+        /* =========================================================
+           2. الهيدر العلوي وشريط اختيار الملفات
+           ========================================================= */
+        .app-header {
+            background: var(--surface-card);
+            border-bottom: 1px solid var(--border-medium);
+            border-top: 4px solid var(--nes-purple-light);
+            position: sticky;
+            top: 0;
+            z-index: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        }
+
+        .header-inner {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 12px 16px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #6d28d9, #2563eb);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 0.82rem;
+            line-height: 1.1;
+            box-shadow: 0 4px 12px rgba(109, 40, 217, 0.25);
+        }
+        .brand-logo small { font-size: 0.54rem; opacity: 0.9; }
+        .brand-text h1 {
+            font-size: 0.98rem;
+            font-weight: 900;
+            color: var(--text-heading);
+            line-height: 1.25;
+        }
+        .brand-text p {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .controls-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .select-box {
+            position: relative;
+            min-width: 260px;
+            flex: 1;
+            max-width: 430px;
+        }
+        .select-box i {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--nes-purple);
+            pointer-events: none;
+        }
+        .file-dropdown {
+            width: 100%;
+            padding: 9px 36px 9px 14px;
+            border-radius: var(--radius-md);
+            border: 1.5px solid var(--nes-purple-border);
+            background: var(--nes-purple-bg);
+            color: var(--text-heading);
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .file-dropdown:focus {
+            outline: none;
+            border-color: var(--nes-purple);
+        }
+
+        .btn-tool {
+            background: var(--surface-sec);
+            color: var(--text-heading);
+            border: 1px solid var(--border-medium);
+            padding: 8px 12px;
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.76rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+        .btn-tool:hover {
+            border-color: var(--nes-purple);
+            color: var(--nes-purple);
+            background: var(--nes-purple-bg);
+        }
+        .btn-tool.primary {
+            background: linear-gradient(135deg, #6d28d9, #2563eb);
+            color: #fff;
+            border: none;
+            box-shadow: 0 3px 10px rgba(109, 40, 217, 0.22);
+        }
+        .btn-tool.primary:hover {
+            opacity: 0.94;
+            color: #fff;
+        }
+
+        /* شريط أزرار الملفات السريعة (الملف الشامل + الملفات 1 إلى 7) */
+        .quick-files-ribbon {
+            background: var(--surface-sec);
+            border-top: 1px solid var(--border-light);
+            padding: 8px 16px;
+        }
+        .ribbon-inner {
+            max-width: 1320px;
+            margin: 0 auto;
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            align-items: center;
+        }
+        .ribbon-inner::-webkit-scrollbar { display: none; }
+        .file-pill-btn {
+            white-space: nowrap;
+            padding: 5px 12px;
+            border-radius: 99px;
+            font-family: inherit;
+            font-size: 0.73rem;
+            font-weight: 800;
+            border: 1px solid var(--border-medium);
+            background: var(--surface-card);
+            color: var(--text-body);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+        .file-pill-btn:hover {
+            border-color: var(--nes-purple);
+            color: var(--nes-purple);
+        }
+        .file-pill-btn.active {
+            background: var(--nes-purple);
+            color: #fff;
+            border-color: var(--nes-purple);
+            box-shadow: 0 2px 8px rgba(109, 40, 217, 0.28);
+        }
+
+        /* =========================================================
+           3. تخطيط مساحة العمل (الفهرس الجانبي + عارض المحتوى)
+           ========================================================= */
+        .workspace-grid {
+            max-width: 1320px;
+            margin: 18px auto 50px;
+            padding: 0 16px;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 18px;
+            align-items: start;
+        }
+
+        @media (max-width: 960px) {
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+            .select-box {
+                max-width: 100%;
+            }
+        }
+
+        /* اللوحة الجانبية (فهرس الأقسام والشرائح) */
+        .toc-sidebar {
+            background: var(--surface-card);
+            border: 1px solid var(--border-medium);
+            border-right: 4px solid var(--nes-purple-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+            position: sticky;
+            top: 130px;
+            max-height: calc(100vh - 148px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .toc-header {
+            padding: 12px 14px;
+            background: var(--surface-sec);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-header h3 {
+            font-size: 0.84rem;
+            font-weight: 900;
+            color: var(--text-heading);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .toc-search-box {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .toc-search-box input {
+            width: 100%;
+            padding: 7px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-medium);
+            background: var(--surface-sec);
+            color: var(--text-heading);
+            font-family: inherit;
+            font-size: 0.75rem;
+        }
+        .toc-search-box input:focus {
+            outline: none;
+            border-color: var(--nes-purple);
+        }
+
+        .toc-list {
+            padding: 10px 12px;
+            overflow-y: auto;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .toc-item a {
+            display: block;
+            padding: 6px 10px;
+            border-radius: 7px;
+            color: var(--text-body);
+            text-decoration: none;
+            font-size: 0.76rem;
+            font-weight: 700;
+            transition: var(--transition);
+            border-right: 3px solid transparent;
+            line-height: 1.45;
+        }
+        .toc-item a:hover, .toc-item a.active {
+            background: var(--nes-purple-bg);
+            color: var(--nes-purple);
+            border-right-color: var(--nes-purple);
+        }
+        .toc-lvl-1 { font-weight: 900 !important; color: var(--text-heading) !important; background: var(--surface-sec); }
+        .toc-lvl-2 { padding-right: 16px !important; }
+        .toc-lvl-3 { padding-right: 26px !important; font-size: 0.72rem !important; color: var(--text-muted) !important; }
+
+        /* =========================================================
+           4. بطاقة القراءة وتنسيق الشرائح والإلقاء (Speaker & Docs View)
+           ========================================================= */
+        .viewer-panel {
+            background: var(--surface-card);
+            border: 1px solid var(--border-medium);
+            border-top: 5px solid var(--nes-purple-light);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+            min-height: 72vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .viewer-meta-bar {
+            background: var(--surface-sec);
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .active-file-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--nes-purple-bg);
+            color: var(--nes-purple);
+            border: 1px solid var(--nes-purple-border);
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 0.78rem;
+            font-weight: 900;
+        }
+
+        .reading-tools {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+        }
+        .stat-chip {
+            background: var(--surface-card);
+            border: 1px solid var(--border-light);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .font-ctrl-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 7px;
+            border: 1px solid var(--border-medium);
+            background: var(--surface-card);
+            color: var(--text-heading);
+            font-weight: 900;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .font-ctrl-btn:hover {
+            border-color: var(--nes-purple);
+            color: var(--nes-purple);
+        }
+
+        /* حالة الانتظار الفارغة قبل اختيار أو تحميل ملف */
+        .empty-state-box {
+            padding: 55px 24px;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .empty-icon-circle {
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
+            background: var(--nes-purple-bg);
+            color: var(--nes-purple);
+            border: 1px solid var(--nes-purple-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.9rem;
+            margin-bottom: 16px;
+        }
+        .empty-state-box h2 {
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: var(--text-heading);
+            margin-bottom: 8px;
+        }
+        .empty-state-box p {
+            max-width: 520px;
+            font-size: 0.84rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        /* محتوى الـ Markdown المنسق */
+        .markdown-content {
+            padding: 30px 34px;
+            font-size: var(--reading-font-size);
+            color: var(--text-body);
+            flex: 1;
+        }
+        @media (max-width: 640px) {
+            .markdown-content {
+                padding: 18px 14px;
+            }
+        }
+
+        /* العناوين الرئيسية للشرائح والأقسام */
+        .markdown-content h1 {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--text-heading);
+            padding: 14px 18px;
+            margin: 24px 0 18px 0;
+            background: linear-gradient(135deg, var(--nes-purple-bg), var(--nes-blue-bg));
+            border: 1px solid var(--nes-purple-border);
+            border-right: 6px solid var(--nes-purple-light);
+            border-radius: var(--radius-md);
+            line-height: 1.4;
+        }
+        .markdown-content h1:first-child { margin-top: 0; }
+
+        .markdown-content h2 {
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: var(--nes-purple);
+            margin: 28px 0 14px 0;
+            padding: 9px 14px;
+            background: var(--surface-sec);
+            border-right: 4px solid var(--nes-purple);
+            border-bottom: 1px solid var(--border-light);
+            border-radius: 0 8px 8px 0;
+        }
+
+        .markdown-content h3 {
+            font-size: 1.02rem;
+            font-weight: 800;
+            color: var(--nes-blue);
+            margin: 22px 0 10px 0;
+            padding: 4px 12px;
+            border-right: 3px solid var(--nes-blue);
+            background: var(--nes-blue-bg);
+            border-radius: 0 6px 6px 0;
+             display: inline-block;
+        }
+
+        .markdown-content p {
+            margin-bottom: 14px;
+            line-height: 1.95;
+        }
+
+        .markdown-content strong {
+            color: var(--text-heading);
+            font-weight: 900;
+            background: var(--nes-purple-bg);
+            padding: 0 5px;
+            border-radius: 4px;
+        }
+
+        /* صناديق الإشارات التوقيتية للمحاضر [...] */
+        .stage-cue-box {
+            margin: 16px 0;
+            padding: 10px 14px;
+            background: var(--nes-teal-bg);
+            border: 1px solid var(--nes-teal-border);
+            border-right: 4px solid var(--nes-teal);
+            border-radius: var(--radius-md);
+            color: var(--nes-teal);
+            font-size: 0.86rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        /* تمييز خاص لوقفات التفكير (5 ثوانٍ) */
+        .stage-cue-box.pause-cue {
+            background: var(--nes-amber-bg);
+            border-color: var(--nes-amber-border);
+            border-right-color: var(--nes-amber);
+            color: var(--nes-amber);
+        }
+
+        /* تمييز الجمل الحوارية والأمثلة بين «...» */
+        .spoken-quote {
+            color: var(--nes-blue);
+            font-weight: 800;
+            background: var(--nes-blue-bg);
+            padding: 1px 7px;
+            border-radius: 6px;
+            border: 1px solid var(--nes-blue-border);
+        }
+
+        .markdown-content ul, .markdown-content ol {
+            margin: 0 0 16px 0;
+            padding-right: 24px;
+        }
+        .markdown-content li {
+            margin-bottom: 8px;
+        }
+
+        .markdown-content hr {
+            border: none;
+            border-top: 2px dashed var(--border-medium);
+            margin: 28px 0;
+        }
+
+        /* الجداول */
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            margin: 18px 0;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-medium);
+        }
+        .markdown-content table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .markdown-content th {
+            background: var(--nes-purple-bg);
+            color: var(--nes-purple);
+            font-weight: 900;
+            text-align: right;
+            padding: 10px 14px;
+            border-bottom: 2px solid var(--nes-purple-border);
+        }
+        .markdown-content td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .markdown-content tr:nth-child(even) td {
+            background: var(--surface-sec);
+        }
+
+        .markdown-content code {
+            font-family: 'Fira Code', monospace;
+            background: var(--surface-tinted);
+            color: var(--nes-rose);
+            border: 1px solid var(--border-medium);
+            padding: 2px 6px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            direction: ltr;
+            display: inline-block;
+        }
+
+        /* شريط التنقل السفلي بين الملفات (السابق / التالي) */
+        .viewer-footer-nav {
+            padding: 14px 20px;
+            background: var(--surface-sec);
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Toast */
+        .toast-msg {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(90px);
+            background: #0f172a;
+            color: #fff;
+            padding: 9px 18px;
+            border-radius: 99px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            transition: transform 0.28s ease;
+        }
+        .toast-msg.show {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- الهيدر العلوي -->
+    <header class="app-header">
+        <div class="header-inner">
+            <div class="brand-area">
+                <div class="brand-logo">
+                    <span>NES</span>
+                    <small>V3.14</small>
+                </div>
+                <div class="brand-text">
+                    <h1>مستعرض نصوص الشرائح وملفات التوثيق (.MD)</h1>
+                    <p>برنامج التهيئة الرقمية والذكاء الاصطناعي • القسم الأول</p>
+                </div>
+            </div>
+
+            <div class="controls-bar">
+                <!-- القائمة المنسدلة لملفات المشروع -->
+                <div class="select-box">
+                    <i class="fas fa-folder-tree"></i>
+                    <select id="file-select" class="file-dropdown" onchange="selectFileByIndex(this.value)">
+                        <option value="" disabled selected>— اختر ملف التوثيق أو الشريحة لعرضه —</option>
+                    </select>
+                </div>
+
+                <!-- زر اختيار ملف أو عدة ملفات .md -->
+                <label class="btn-tool primary" title="اختر ملفًا أو عدة ملفات .md من جهازك أو السحابة">
+                    <i class="fas fa-file-arrow-up"></i> اختر ملف (.md)
+                    <input type="file" id="file-input" accept=".md,.markdown,.txt" multiple style="display:none" onchange="handlePickedFiles(this.files)">
+                </label>
+
+                <!-- زر فتح المجلد كاملًا -->
+                <label class="btn-tool" title="اختر المجلد لربط جميع ملفات .md دفعة واحدة">
+                    <i class="fas fa-folder-open"></i> ربط المجلد
+                    <input type="file" id="folder-input" webkitdirectory directory multiple style="display:none" onchange="handlePickedFiles(this.files)">
+                </label>
+
+                <!-- زر الوضع الفاتح / الداكن -->
+                <button type="button" class="btn-tool" onclick="document.body.classList.toggle('dark-mode')" title="تبديل الوضع الليلي / النهاري">
+                    <i class="fas fa-circle-half-stroke"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- شريط الوصول السريع لملفاتك الـ 8 بالترتيب -->
+        <div class="quick-files-ribbon">
+            <div class="ribbon-inner" id="quick-ribbon"></div>
+        </div>
+    </header>
+
+    <!-- مساحة العمل الرئيسية -->
+    <main class="workspace-grid">
+
+        <!-- الفهرس الجانبي التلقائي للعناوين والشرائح -->
+        <aside class="toc-sidebar">
+            <div class="toc-header">
+                <h3><i class="fas fa-list-ol" style="color:var(--nes-purple)"></i> فهرس أقسام الملف</h3>
+                <span id="toc-counter" style="font-size:0.7rem; font-weight:800; color:var(--nes-purple);">0 قسم</span>
+            </div>
+            <div class="toc-search-box">
+                <input type="text" id="toc-filter-input" placeholder="ابحث داخل عناوين الملف..." oninput="filterTOC(this.value)">
+            </div>
+            <ul class="toc-list" id="toc-list">
+                <li style="padding:14px 10px; font-size:0.75rem; color:var(--text-muted); text-align:center;">
+                    اختر ملفًا من الأعلى لعرض فهرس الشرائح والنقاط الخاصة به.
+                </li>
+            </ul>
+        </aside>
+
+        <!-- بطاقة عرض المحتوى -->
+        <section class="viewer-panel" id="drop-zone">
+            <div class="viewer-meta-bar">
+                <div class="active-file-tag">
+                    <i class="fab fa-markdown" style="font-size:1.05rem;"></i>
+                    <span id="active-file-label">لم يتم اختيار ملف بعد</span>
+                </div>
+
+                <div class="reading-tools">
+                    <span class="stat-chip"><i class="fas fa-layer-group" style="color:var(--nes-purple)"></i> العناوين: <strong id="stat-h">0</strong></span>
+                    <span class="stat-chip"><i class="fas fa-microphone-lines" style="color:var(--nes-teal)"></i> إشارات الإلقاء: <strong id="stat-cues">0</strong></span>
+                    <span class="stat-chip"><i class="fas fa-clock" style="color:var(--nes-amber)"></i> وقت القراءة: <strong id="stat-time">0 د</strong></span>
+                    <button type="button" class="font-ctrl-btn" onclick="adjustFontSize(0.08)" title="تكبير الخط">A+</button>
+                    <button type="button" class="font-ctrl-btn" onclick="adjustFontSize(-0.08)" title="تصغير الخط">A-</button>
+                    <button type="button" class="btn-tool" style="padding:4px 10px; font-size:0.72rem;" onclick="window.print()">
+                        <i class="fas fa-print"></i> طباعة
+                    </button>
+                </div>
+            </div>
+
+            <!-- شاشة البداية النظيفة (بدون أي نص مدمج مسبقًا) -->
+            <div class="empty-state-box" id="empty-state">
+                <div class="empty-icon-circle">
+                    <i class="fas fa-book-open-reader"></i>
+                </div>
+                <h2>اختر ملف التوثيق أو الشريحة لبدء الاستعراض</h2>
+                <p>
+                    إذا كان هذا الملف مرفوعًا على السحابة بجوار ملفاتك الـ 8، فسيقوم بجلبها فور نقرك على اسم الملف في الشريط العلوي. وإذا كنت تفتحه محليًا على جهازك، انقر على زر <strong>«اختر ملف (.md)»</strong> أو اسحب الملفات وأفلتها هنا مباشرة.
+                </p>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+                    <button type="button" class="btn-tool primary" onclick="selectFileByIndex(1)">
+                        <i class="fas fa-play"></i> فتح الملف الأول (01_المقدمة_وقصة_الطالبتين-1.md)
+                    </button>
+                    <button type="button" class="btn-tool" onclick="selectFileByIndex(0)">
+                        <i class="fas fa-file-Waveform"></i> فتح الملف الشامل (Slides 01-07)
+                    </button>
+                </div>
+            </div>
+
+            <!-- حاوية النص المنسق -->
+            <article class="markdown-content" id="markdown-view" style="display:none;"></article>
+
+            <!-- أزرار التنقل بين الملفات (السابق / التالي) -->
+            <footer class="viewer-footer-nav" id="footer-nav" style="display:none;">
+                <button type="button" class="btn-tool" id="btn-prev-file" onclick="navigateAdjacentFile(-1)">
+                    <i class="fas fa-arrow-right"></i> الملف السابق
+                </button>
+                <span id="footer-file-pos" style="font-size:0.76rem; font-weight:800; color:var(--text-muted);"></span>
+                <button type="button" class="btn-tool primary" id="btn-next-file" onclick="navigateAdjacentFile(1)">
+                    الملف التالي <i class="fas fa-arrow-left"></i>
+                </button>
+            </footer>
+        </section>
+
+    </main>
+
+    <!-- إشعار Toast -->
+    <div class="toast-msg" id="toast">
+        <i class="fas fa-circle-info" style="color:#38bdf8;"></i>
+        <span id="toast-text">جاهز</span>
+    </div>
+
+    <script>
+        /* =========================================================
+           1. قائمة ملفاتك الـ 8 المعتمدة بالترتيب الدقيق والمسميات المفهومة
+           ========================================================= */
+        const PROJECT_FILES_REGISTRY = [
+            {
+                index: 0,
+                fileName: "NES_Section01_Slides_01-07_Final_Taizi_Speaker.md",
+                shortLabel: "الملف الشامل (الشرائح 01–07)",
+                badge: "الشامل"
+            },
+            {
+                index: 1,
+                fileName: "01_المقدمة_وقصة_الطالبتين-1.md",
+                shortLabel: "الملف الأول: المقدمة وقصة الطالبتين",
+                badge: "ملف 01"
+            },
+            {
+                index: 2,
+                fileName: "02_العنصر_الأول_الاستخدام-1.md",
+                shortLabel: "الملف الثاني: العنصر الأول (الاستخدام)",
+                badge: "ملف 02"
+            },
+            {
+                index: 3,
+                fileName: "03_العنصر_الثاني_الفهم-1.md",
+                shortLabel: "الملف الثالث: العنصر الثاني (الفهم)",
+                badge: "ملف 03"
+            },
+            {
+                index: 4,
+                fileName: "04_العنصر_الثالث_الإنجاز-1.md",
+                shortLabel: "الملف الرابع: العنصر الثالث (الإنجاز)",
+                badge: "ملف 04"
+            },
+            {
+                index: 5,
+                fileName: "05_العبارة_الختامية_اتخاذ_القرار-1.md",
+                shortLabel: "الملف الخامس: العبارة الختامية (اتخاذ القرار)",
+                badge: "ملف 05"
+            },
+            {
+                index: 6,
+                fileName: "06_وقفة_التفكير_النهائية.md",
+                shortLabel: "الملف السادس: وقفة التفكير النهائية",
+                badge: "ملف 06"
+            },
+            {
+                index: 7,
+                fileName: "07_الربط_والخلاصة_والانتقال.md",
+                shortLabel: "الملف السابع: الربط والخلاصة والانتقال",
+                badge: "ملف 07"
+            }
+        ];
+
+        // ذاكرة تخزين محتوى الملفات عند قراءتها من السحابة أو الجهاز
+        const fileContentCache = {};
+        let currentActiveIndex = -1;
+        let currentFontScale = 1.05;
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-text').textContent = msg;
+            t.classList.add('show');
+            clearTimeout(window.toastTimer);
+            window.toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        /* =========================================================
+           2. بناء القوائم وأزرار الوصول السريع للملفات
+           ========================================================= */
+        function initFilesUI() {
+            const selectEl = document.getElementById('file-select');
+            const ribbonEl = document.getElementById('quick-ribbon');
+
+            selectEl.innerHTML = '<option value="" disabled selected>— اختر ملف التوثيق أو الشريحة لعرضه —</option>';
+            ribbonEl.innerHTML = '';
+
+            PROJECT_FILES_REGISTRY.forEach((item, idx) => {
+                // إضافة للقائمة المنسدلة
+                const opt = document.createElement('option');
+                opt.value = idx;
+                opt.textContent = `${item.shortLabel} (${item.fileName})`;
+                selectEl.appendChild(opt);
+
+                // إضافة لشريط الأزرار السريعة
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'file-pill-btn';
+                btn.id = `ribbon-btn-${idx}`;
+                btn.innerHTML = `<i class="far fa-file-lines"></i> <span>${item.shortLabel}</span>`;
+                btn.onclick = () => selectFileByIndex(idx);
+                ribbonEl.appendChild(btn);
+            });
+        }
+
+        /* =========================================================
+           3. جلب الملف من السحابة (نفس المجلد) أو من الذاكرة المحلية
+           ========================================================= */
+        async function selectFileByIndex(idx) {
+            idx = parseInt(idx, 10);
+            if (isNaN(idx) || !PROJECT_FILES_REGISTRY[idx]) return;
+
+            const fileObj = PROJECT_FILES_REGISTRY[idx];
+            currentActiveIndex = idx;
+
+            // تحديث حالة الأزرار والقائمة
+            document.getElementById('file-select').value = idx;
+            document.querySelectorAll('.file-pill-btn').forEach((b, i) => {
+                b.classList.toggle('active', i === idx);
+            });
+
+            // إذا كان الملف محمّلًا مسبقًا في الذاكرة، اعرضه فورًا
+            if (fileContentCache[fileObj.fileName]) {
+                renderFormattedDocument(fileObj, fileContentCache[fileObj.fileName]);
+                return;
+            }
+
+            // محاولة جلب الملف تلقائيًا من نفس المجلد على السحابة عبر fetch
+            try {
+                const response = await fetch(`./${encodeURIComponent(fileObj.fileName)}`);
+                if (!response.ok) throw new Error('File not fetched');
+                const text = await response.text();
+                fileContentCache[fileObj.fileName] = text;
+                renderFormattedDocument(fileObj, text);
+                showToast(`تم تحميل: ${fileObj.shortLabel}`);
+            } catch (err) {
+                // إذا كان المستخدم يفتح الصفحة محليًا عبر file:// أو لم يرفع الملف بعد
+                showToast(`يرجى اختيار الملف (${fileObj.fileName}) من زر «اختر ملف» أو «ربط المجلد»`);
+                document.getElementById('file-input').click();
+            }
+        }
+
+        // التعامل مع الملفات التي يختارها المستخدم عبر زر «اختر ملف» أو «ربط المجلد» أو السحب والإفلات
+        function handlePickedFiles(fileList) {
+            if (!fileList || fileList.length === 0) return;
+
+            let firstMatchedIndex = -1;
+            let loadedCount = 0;
+
+            Array.from(fileList).forEach(file => {
+                if (!file.name.toLowerCase().endsWith('.md') && !file.name.toLowerCase().endsWith('.markdown') && !file.name.toLowerCase().endsWith('.txt')) {
+                    return;
+                }
+
+                // البحث هل الملف ضمن القائمة الـ 8 أو ملف إضافي جديد
+                let regItem = PROJECT_FILES_REGISTRY.find(r => r.fileName === file.name);
+                if (!regItem) {
+                    const newIdx = PROJECT_FILES_REGISTRY.length;
+                    regItem = {
+                        index: newIdx,
+                        fileName: file.name,
+                        shortLabel: `ملف إضافي: ${file.name.replace(/\.md$/i, '')}`,
+                        badge: `ملف ${newIdx}`
+                    };
+                    PROJECT_FILES_REGISTRY.push(regItem);
+                    initFilesUI();
+                }
+
+                if (firstMatchedIndex === -1) firstMatchedIndex = regItem.index;
+                loadedCount++;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    fileContentCache[regItem.fileName] = e.target.result;
+                    if (regItem.index === firstMatchedIndex) {
+                        selectFileByIndex(regItem.index);
+                    }
+                };
+                reader.readAsText(file, 'UTF-8');
+            });
+
+            if (loadedCount > 0) {
+                showToast(`تم ربط وتحميل ${loadedCount} ملف بنجاح`);
+            }
+        }
+
+        /* =========================================================
+           4. المحلل الذكي لنصوص الشرائح والـ Markdown (Smart Pre-Processor)
+           ========================================================= */
+        function preprocessSlideMarkdown(rawText) {
+            const lines = rawText.replace(/\r\n/g, '\n').split('\n');
+            const processedLines = [];
+
+            const ordinalRegex = /^(أولًا|ثانيًا|ثالثًا|رابعًا|خامسًا|سادسًا|سابعًا|ثامنًا|تاسعًا|عاشرًا)(\s*:|\s+—|\s+-)/;
+            const slideRegex = /^الشريحة\s+\d+/;
+            const numberedItemRegex = /^[①②③④⑤⑥⑦⑧⑨⑩]\s+/;
+            const subSpeakerHeadings = /^(الطالبة الأولى|الطالبة الثانية|من امتلاك الأداة إلى اتخاذ قرار صحيح|الانتقال الطبيعي إلى الشريحة الثانية)$/;
+
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+
+                // 1. تحويل سطور "الشريحة 01 — ..." غير المسبوقة بـ # إلى عنوان رئيسي H1
+                if (slideRegex.test(line) && !line.startsWith('#')) {
+                    processedLines.push(`# ${line}`);
+                    continue;
+                }
+
+                // 2. تحويل سطور "أولًا: ..." و "① الفهم — ..." غير المسبوقة بـ # إلى عنوان قسم H2
+                if ((ordinalRegex.test(line) || numberedItemRegex.test(line)) && !line.startsWith('#')) {
+                    processedLines.push(`## ${line}`);
+                    continue;
+                }
+
+                // 3. تحويل العناوين الفرعية المعروفة مثل "الطالبة الأولى" و "الطالبة الثانية" إلى H3
+                if (subSpeakerHeadings.test(line) && !line.startsWith('#')) {
+                    processedLines.push(`### ${line}`);
+                    continue;
+                }
+
+                // 4. تحويل الإشارات التوقيتية بين [...] في سطر مستقل إلى صندوق توجيه للمحاضر
+                const cleanBracket = line.replace(/^\*\*|\*\*$/g, '').trim();
+                if (cleanBracket.startsWith('[') && cleanBracket.endsWith(']') && cleanBracket.length > 4) {
+                    const cueContent = cleanBracket.slice(1, -1);
+                    const isPause = cueContent.includes('وقفة') || cueContent.includes('صمت') || cueContent.includes('ثوان');
+                    const icon = isPause ? 'fa-hourglass-half' : 'fa-clapperboard';
+                    const cls = isPause ? 'stage-cue-box pause-cue' : 'stage-cue-box';
+                    processedLines.push(`<div class="${cls}"><i class="fas ${icon}"></i> <span>${cueContent}</span></div>`);
+                    continue;
+                }
+
+                // 5. تمييز الجمل الحوارية بين «...» بتنسيق بصري أنيق
+                line = lines[i].replace(/«([^»]+)»/g, '<span class="spoken-quote">«$1»</span>');
+                processedLines.push(line);
+            }
+
+            return processedLines.join('\n');
+        }
+
+        /* =========================================================
+           5. عرض وتنسيق المحتوى وبناء الفهرس التلقائي
+           ========================================================= */
+        marked.setOptions({
+            gfm: true,
+            breaks: true
+        });
+
+        function renderFormattedDocument(fileObj, rawMarkdown) {
+            document.getElementById('empty-state').style.display = 'none';
+            const viewEl = document.getElementById('markdown-view');
+            const footerEl = document.getElementById('footer-nav');
+            viewEl.style.display = 'block';
+            footerEl.style.display = 'flex';
+
+            document.getElementById('active-file-label').textContent = `${fileObj.shortLabel} — ${fileObj.fileName}`;
+
+            // معالجة النص الذكية ثم تحويله عبر Marked
+            const enhancedMd = preprocessSlideMarkdown(rawMarkdown);
+            viewEl.innerHTML = marked.parse(enhancedMd);
+
+            // تغليف الجداول لتكون متجاوبة على الهاتف
+            viewEl.querySelectorAll('table').forEach(tbl => {
+                if (!tbl.parentElement.classList.contains('table-wrap')) {
+                    const wrap = document.createElement('div');
+                    wrap.className = 'table-wrap';
+                    tbl.parentNode.insertBefore(wrap, tbl);
+                    wrap.appendChild(tbl);
+                }
+            });
+
+            // حساب الإحصاءات (العناوين، إشارات الإلقاء، وقت القراءة المقدر)
+            const headings = viewEl.querySelectorAll('h1, h2, h3');
+            const cues = viewEl.querySelectorAll('.stage-cue-box');
+            const wordCount = rawMarkdown.trim().split(/\s+/).length;
+            const readMinutes = Math.max(1, Math.round(wordCount / 130));
+
+            document.getElementById('stat-h').textContent = headings.length;
+            document.getElementById('stat-cues').textContent = cues.length;
+            document.getElementById('stat-time').textContent = `${readMinutes} د`;
+            document.getElementById('toc-counter').textContent = `${headings.length} عنوان`;
+
+            // بناء الفهرس الجانبي التلقائي
+            const tocList = document.getElementById('toc-list');
+            tocList.innerHTML = '';
+
+            headings.forEach((h, i) => {
+                const id = `sec-heading-${i}`;
+                h.id = id;
+                const lvl = h.tagName.toLowerCase().replace('h', '');
+                const li = document.createElement('li');
+                li.className = 'toc-item';
+                li.innerHTML = `<a href="#${id}" class="toc-lvl-${lvl}" onclick="scrollToSection('${id}', event)">${h.textContent}</a>`;
+                tocList.appendChild(li);
+            });
+
+            // تحديث أزرار التنقل السفلي بين الملفات
+            document.getElementById('footer-file-pos').textContent = `الملف ${fileObj.index + 1} من ${PROJECT_FILES_REGISTRY.length}`;
+            document.getElementById('btn-prev-file').disabled = (fileObj.index === 0);
+            document.getElementById('btn-next-file').disabled = (fileObj.index === PROJECT_FILES_REGISTRY.length - 1);
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function scrollToSection(id, event) {
+            event.preventDefault();
+            const target = document.getElementById(id);
+            if (!target) return;
+            const y = target.getBoundingClientRect().top + window.pageYOffset - 135;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+
+            document.querySelectorAll('.toc-item a').forEach(a => a.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        function filterTOC(q) {
+            const query = q.trim().toLowerCase();
+            document.querySelectorAll('#toc-list .toc-item').forEach(li => {
+                li.style.display = li.textContent.toLowerCase().includes(query) ? 'block' : 'none';
+            });
+        }
+
+        function navigateAdjacentFile(step) {
+            const nextIdx = currentActiveIndex + step;
+            if (nextIdx >= 0 && nextIdx < PROJECT_FILES_REGISTRY.length) {
+                selectFileByIndex(nextIdx);
+            }
+        }
+
+        function adjustFontSize(delta) {
+            currentFontScale = Math.min(1.45, Math.max(0.85, currentFontScale + delta));
+            document.documentElement.style.setProperty('--reading-font-size', `${currentFontScale}rem`);
+        }
+
+        /* =========================================================
+           6. دعم السحب والإفلات المباشر للملفات
+           ========================================================= */
+        const dropZone = document.getElementById('drop-zone');
+        ['dragenter', 'dragover'].forEach(evt => {
+            dropZone.addEventListener(evt, e => e.preventDefault());
+        });
+        dropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                handlePickedFiles(e.dataTransfer.files);
+            }
+        });
+
+        // تهيئة الواجهة عند التشغيل، ومحاولة فتح الملف الأول تلقائيًا إذا كنا على السحابة
+        window.addEventListener('DOMContentLoaded', async () => {
+            initFilesUI();
+            if (window.location.protocol !== 'file:') {
+                // إذا كان مرفوعًا على السحابة، يفتح الملف الأول تلقائيًا من المجلد
+                selectFileByIndex(1);
+            }
+        });
+    </script>
+</body>
+</html>
