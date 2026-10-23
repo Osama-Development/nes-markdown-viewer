@@ -1,8 +1,8 @@
-# NES EDU Markdown Viewer — preserved snapshot 2/6
+# NES EDU Markdown Viewer — preserved snapshot 3/6
 
-Recording-oriented revision; excludes tone metadata from the reading-time estimate and adjusts the presentation styling.
+Adds collapsible panels, keyboard scrolling, tone classification, scroll spy, contenteditable text and Markdown download reconstructed from rendered DOM.
 
-Open `docs-viewer-recording.html` in a modern browser and choose a local `.md`, `.markdown` or `.txt`
+Open `docs-viewer (1).html` in a modern browser and choose a local `.md`, `.markdown` or `.txt`
 file. For registry-based fetching, serve this directory with
 `python3 -m http.server 8000` and open the HTML at `http://localhost:8000/`
 (URL-encode spaces). The registry's Markdown documents are not part of these
