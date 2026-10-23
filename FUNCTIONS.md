@@ -5,7 +5,7 @@ internals are excluded. File/UI functions load files and navigate; preprocess an
 render functions transform presentation; draft/state functions persist source;
 editing functions map and patch text; structure functions operate on selected spans.
 
-## docs-viewer.html
+## docs-viewer-recording.html
 
 - `showToast()`
 - `initFilesUI()`
