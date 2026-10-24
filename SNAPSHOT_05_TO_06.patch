@@ -1,0 +1,427 @@
+--- NES_EDU_Markdown_Viewer_Visual_Edit_Final.html
++++ NES_EDU_Markdown_Viewer_Complete_Final.html
+@@ -4054,6 +4054,64 @@
+             .viewer-panel { border: 0; box-shadow: none; }
+             .markdown-content { padding: 0; }
+         }
++
++        /* ===== محرر البنية السياقي: امتداد محدود لهوية NES الحالية ===== */
++        .markdown-content .source-block.is-current > blockquote,
++        .markdown-content .source-block.is-current > h1,
++        .markdown-content .source-block.is-current > h2,
++        .markdown-content .source-block.is-current > h3,
++        .markdown-content .source-block.is-current > p {
++            outline: 2px solid var(--nes-purple-border); outline-offset: 3px;
++        }
++        .markdown-content blockquote > p:not(:first-child) {
++            padding: 7px 9px; margin: 7px 0;
++            border: 1px solid var(--border-light);
++            border-radius: 8px; background: color-mix(in srgb, var(--surface-card) 35%, transparent);
++            line-height: 1.82;
++        }
++        .markdown-content blockquote > p.is-current-paragraph {
++            border-color: var(--nes-purple-border);
++            box-shadow: inset 3px 0 0 var(--nes-purple-light);
++        }
++        .markdown-content blockquote > p:first-child { margin-bottom: 8px; }
++        .markdown-content blockquote > hr { margin: 12px 8px; border: 0; border-top: 1px dashed var(--border-medium); }
++        .floating-btn.structure-trigger { width: auto; border-radius: 99px; padding: 0 12px; gap: 6px; }
++        .structure-panel {
++            position: fixed; z-index: 1500; bottom: 82px; left: 20px;
++            width: min(375px, calc(100vw - 30px)); max-height: min(76dvh, 670px);
++            overflow: auto; padding: 16px; border: 1px solid var(--nes-purple-border);
++            border-radius: 16px; background: var(--surface-card); box-shadow: 0 16px 48px rgba(15,23,42,.21);
++            color: var(--text-body); display: none;
++        }
++        .structure-panel.open { display: block; animation: panelIn .16s ease-out; }
++        @keyframes panelIn { from { opacity: .5; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
++        .structure-panel .sp-head { display: flex; justify-content: space-between; align-items: center; gap: 9px; margin-bottom: 8px; }
++        .structure-panel .sp-head strong { color: var(--nes-purple); font-size: .95rem; }
++        .structure-panel .sp-close { border: 0; background: var(--surface-sec); color: var(--text-body); border-radius: 8px; cursor: pointer; padding: 3px 10px; font-size: 1.15rem; }
++        .sp-location { font-size: .72rem; color: var(--text-muted); line-height: 1.6; margin: 6px 0 13px; padding: 7px 9px; background: var(--surface-sec); border-radius: 7px; overflow-wrap: anywhere; }
++        .sp-label { display: block; font-weight: 800; font-size: .74rem; color: var(--text-heading); margin: 10px 0 5px; }
++        .sp-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
++        .sp-input { width: 100%; border: 1px solid var(--border-medium); background: var(--surface-sec); color: var(--text-body); padding: 9px 8px; border-radius: 9px; font: 700 .78rem 'Cairo','Tajawal',sans-serif; }
++        .sp-input:focus { outline: 2px solid var(--nes-purple-border); border-color: var(--nes-purple); }
++        .sp-divider { border: 0; border-top: 1px solid var(--border-light); margin: 13px 0; }
++        .sp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 7px; }
++        .sp-action { cursor: pointer; text-align: center; padding: 9px 5px; border-radius: 9px; border: 1px solid var(--border-medium); background: var(--surface-sec); color: var(--text-heading); font: 800 .74rem 'Cairo','Tajawal',sans-serif; }
++        .sp-action:hover { border-color: var(--nes-purple); background: var(--nes-purple-bg); color: var(--nes-purple); }
++        .sp-action.main { border-color: var(--nes-purple-border); background: var(--nes-purple-bg); color: var(--nes-purple); }
++        .sp-action.danger { color: var(--nes-rose); border-color: var(--nes-rose-border); background: var(--nes-rose-bg); }
++        .sp-action:disabled { opacity: .42; cursor: not-allowed; }
++        .sp-help { font-size: .68rem; color: var(--text-muted); margin-top: 10px; line-height: 1.75; }
++        dialog.export-name-dialog { padding: 20px; border: 1px solid var(--nes-purple-border); background: var(--surface-card); color: var(--text-body); border-radius: 16px; box-shadow: 0 18px 70px #0004; width: min(440px, calc(100vw - 28px)); margin: auto; }
++        dialog.export-name-dialog::backdrop { background: rgba(15,23,42,.44); }
++        .export-name-dialog h3 { margin: 0 0 10px; color: var(--nes-purple); }
++        .export-name-dialog p { font-size: .75rem; color: var(--text-muted); margin-bottom: 12px; }
++        .export-name-dialog .sp-row { margin-top: 12px; }
++        @media (max-width: 640px) {
++            .structure-panel { left: 8px; right: 8px; bottom: 70px; width: auto; max-height: 70dvh; padding: 12px; }
++            .floating-btn.structure-trigger { font-size: .7rem; padding: 0 8px; }
++            .markdown-content blockquote > p:not(:first-child) { padding: 5px 7px; }
++        }
++        @media print { .structure-panel, .export-name-dialog { display:none!important; } }
+     </style>
+ </head>
+ <body>
+@@ -4195,10 +4253,42 @@
+         <button type="button" class="floating-btn" onclick="adjustFontSize(0.08)" title="تكبير حجم الخط">A+</button>
+         <button type="button" class="floating-btn" onclick="adjustFontSize(-0.08)" title="تصغير حجم الخط">A-</button>
+         <button type="button" class="floating-btn" onclick="resetFontSize()" title="إعادة تعيين الخط الافتراضي"><i class="fas fa-arrows-rotate"></i></button>
++        <button type="button" class="floating-btn structure-trigger" onclick="toggleStructurePanel()" title="إضافة وتنظيم البطاقات والفقرات والعناوين"><i class="fas fa-layer-group"></i> تنظيم</button>
+         <button type="button" class="btn-download-export" onclick="exportCurrentMarkdown()" title="تنزيل التعديلات بملف .md جديد">
+             <i class="fas fa-floppy-disk"></i> حفظ كملف MD
+         </button>
+     </div>
++
++
++    <!-- إدارة المقطع المحدد: لا تُعرض علامات Markdown للمستخدم -->
++    <aside class="structure-panel" id="structurePanel" aria-label="تنظيم النص ومربعات الإلقاء">
++        <div class="sp-head"><strong><i class="fas fa-layer-group"></i> تنظيم النص والإلقاء</strong><button class="sp-close" type="button" onclick="toggleStructurePanel(false)" aria-label="إغلاق">×</button></div>
++        <div class="sp-location" id="spLocation">انقر على أي بطاقة أو فقرة أو عنوان لتحديد موضع العمل.</div>
++        <div class="sp-fields">
++            <label><span class="sp-label">نوع البطاقة</span><select id="spKind" class="sp-input" onchange="changeCardMetadata()"><option>نص</option><option>عبارة</option><option>سؤال</option><option>قصة</option><option>شرح</option><option>تأكيد</option><option>تأمل</option><option>خلاصة</option></select></label>
++            <label><span class="sp-label">نبرة الإلقاء</span><select id="spTone" class="sp-input" onchange="changeCardMetadata()"><option>حوارية قصصية</option><option>ترحيبية هادئة</option><option>تساؤلية تفاعلية</option><option>تأكيدية</option><option>تأملية هادئة</option><option>انتقال سلس</option><option>ختامية دافئة</option></select></label>
++        </div>
++        <div class="sp-row"><button class="sp-action main" type="button" onclick="insertNewCard(false)"><i class="fas fa-plus"></i> بطاقة بعدها</button><button class="sp-action" type="button" onclick="insertNewCard(true)"><i class="fas fa-arrow-up"></i> بطاقة قبلها</button></div>
++        <div class="sp-row"><button class="sp-action" type="button" id="spApplyCard" onclick="changeCardMetadata()"><i class="fas fa-wand-magic-sparkles"></i> تحديث النوع والنبرة</button><button class="sp-action danger" type="button" id="spDeleteCard" onclick="deleteSelectedCard()"><i class="fas fa-trash-can"></i> حذف البطاقة</button></div>
++        <hr class="sp-divider">
++        <div class="sp-label">الأسطر والفقرات والفواصل</div>
++        <div class="sp-row"><button class="sp-action" type="button" onclick="insertStructuralLine('line')">↵ سطر بنفس الفقرة</button><button class="sp-action" type="button" onclick="insertStructuralLine('paragraph')">¶ فقرة جديدة</button></div>
++        <div class="sp-row"><button class="sp-action" type="button" onclick="insertStructuralLine('divider')"><i class="fas fa-minus"></i> فاصل داخل البطاقة</button><button class="sp-action" type="button" onclick="insertStructuralLine('section')"><i class="fas fa-grip-lines"></i> فاصل بين الأقسام</button></div>
++        <hr class="sp-divider">
++        <div class="sp-label">تسلسل العناوين (الأب / الابن)</div>
++        <select id="spHeadingLevel" class="sp-input"><option value="1">H1 — عنوان رئيسي (أب)</option><option value="2" selected>H2 — عنوان عنصر (ابن)</option><option value="3">H3 — عنوان فرعي (حفيد)</option></select>
++        <div class="sp-row"><button class="sp-action" type="button" onclick="insertNewHeading()"><i class="fas fa-plus"></i> إضافة عنوان</button><button class="sp-action" type="button" id="spUpdateHeading" onclick="changeHeadingLevel()"><i class="fas fa-sitemap"></i> تغيير المستوى</button></div>
++        <p class="sp-help">حدّد المقطع بالنقر عليه. Enter داخل النص لإضافة سطر في الفقرة نفسها؛ Ctrl+Enter لفقرة جديدة. كل عملية تحفظ مسودة Markdown دون إعادة كتابة بقية الملف.</p>
++    </aside>
++    <dialog class="export-name-dialog" id="exportNameDialog">
++        <form method="dialog" id="exportNameForm">
++            <h3><i class="fas fa-file-export"></i> تصدير Markdown</h3>
++            <p>اختر اسم الملف الذي تريد تنزيله. يحتفظ الملف بجميع تنسيقاته.</p>
++            <label class="sp-label" for="exportNameInput">اسم الملف الجديد</label>
++            <input class="sp-input" id="exportNameInput" type="text" required dir="auto" autocomplete="off" spellcheck="false">
++            <div class="sp-row"><button class="sp-action main" type="submit" value="export">تنزيل الملف</button><button class="sp-action" type="submit" value="cancel" formnovalidate>إلغاء</button></div>
++        </form>
++    </dialog>
+ 
+     <!-- إشعار Toast -->
+     <div class="toast-msg" id="toast">
+@@ -4659,10 +4749,12 @@
+                 tocList.appendChild(li);
+             });
+             setupScrollSpy(headings);
++            bindStructureSelection(viewEl);
+             document.getElementById('footer-file-pos').textContent = `الملف ${fileObj.index + 1} من ${PROJECT_FILES_REGISTRY.length}`;
+             document.getElementById('btn-prev-file').disabled = (fileObj.index === 0);
+             document.getElementById('btn-next-file').disabled = (fileObj.index === PROJECT_FILES_REGISTRY.length - 1);
+             updateDraftStatus(documentStates.get(fileObj.fileName));
++            if (opts.selectAt != null) activateSelectedPosition(opts.selectAt, opts.openPanel);
+             if (opts.preserveScroll) {
+                 window.scrollTo({ top: oldY, behavior: 'instant' });
+             } else {
+@@ -4765,7 +4857,7 @@
+                     event.inputType === 'formatUnderline') event.preventDefault();
+             });
+             el.addEventListener('keydown', event => {
+-                if (event.key === 'Enter') { event.preventDefault(); el.blur(); }
++                if (event.key === 'Enter') { event.preventDefault(); insertStructuralLine(event.ctrlKey || event.metaKey ? 'paragraph' : 'line', el); }
+                 if ((event.ctrlKey || event.metaKey) && ['b','i','u'].includes(event.key.toLowerCase())) {
+                     event.preventDefault();
+                 }
+@@ -4860,24 +4952,280 @@
+         }
+ 
+         // تصدير المصدر الفعلي حرفيًا، حتى عند عدم وجود أي تعديل.
++        // فتح تسمية الملف (لا نغيّر المصدر ولا نصدر تلقائيًا باسم ثابت).
+         function exportCurrentMarkdown() {
+             const state = currentDocument();
+-            if (!state) { showToast('يرجى اختيار ملف أولًا'); return; }
++            if (!state) { showToast('اختر ملف Markdown أولًا'); return; }
+             flushDocumentSave();
+-            const exactMarkdown = state.source;
+-            const blob = new Blob([exactMarkdown], { type: 'text/markdown;charset=utf-8' });
+-            const downloadUrl = URL.createObjectURL(blob);
+-            const a = document.createElement('a');
+-            a.href = downloadUrl;
+-            a.download = `MODIFIED_${state.fileName}`;
+-            document.body.appendChild(a);
+-            a.click();
+-            a.remove();
+-            setTimeout(() => URL.revokeObjectURL(downloadUrl), 5000);
++            const dlg = document.getElementById('exportNameDialog');
++            const input = document.getElementById('exportNameInput');
++            input.value = `MODIFIED_${state.fileName.replace(/\\/g, '/') .split('/').pop()}`;
++            if (dlg.showModal) { dlg.showModal(); input.focus(); input.select(); }
++            else { const name = prompt('اسم الملف الجديد:', input.value); if (name !== null) downloadMarkdownNamed(name); }
++        }
++        function downloadMarkdownNamed(requested) {
++            const state = currentDocument();
++            if (!state) return;
++            let name = String(requested || '').trim().replace(/[\\/:*?"<>|\x00-\x1F]/g, '_');
++            if (!name) { showToast('اكتب اسمًا للملف'); return; }
++            if (!/\.(md|markdown)$/i.test(name)) name += '.md';
++            flushDocumentSave();
++            const blob = new Blob([state.source], { type: 'text/markdown;charset=utf-8' });
++            const url = URL.createObjectURL(blob), anchor = document.createElement('a');
++            anchor.href = url; anchor.download = name;
++            document.body.appendChild(anchor); anchor.click(); anchor.remove();
++            setTimeout(() => URL.revokeObjectURL(url), 15000);
+             state.exported = state.source;
+-            persistDocument(state);
+-            updateDraftStatus(state);
+-            showToast(`طُلب تنزيل الملف: MODIFIED_${state.fileName} — وليس مجرد حفظ مؤقت`);
++            persistDocument(state); updateDraftStatus(state);
++            showToast(`بدأ تنزيل: ${name}`);
++        }
++        document.getElementById('exportNameForm').addEventListener('submit', (event) => {
++            event.preventDefault();
++            const dlg = document.getElementById('exportNameDialog');
++            const submitter = event.submitter;
++            if (submitter && submitter.value === 'cancel') { dlg.close(); return; }
++            const name = document.getElementById('exportNameInput').value;
++            if (!name.trim()) { showToast('اكتب اسم الملف'); return; }
++            dlg.close(); downloadMarkdownNamed(name);
++        });
++
++
++        /* =========================================================
++           8.5 أدوات تنظيم البنية: تعتمد على نطاقات مصدر Markdown الفعلية
++           ========================================================= */
++        let selectedStructure = null;
++        const spNode = () => document.getElementById('structurePanel');
++        const spSelected = id => document.getElementById(id);
++        function toggleStructurePanel(force) {
++            const panel = spNode();
++            const show = typeof force === 'boolean' ? force : !panel.classList.contains('open');
++            panel.classList.toggle('open', show);
++            if (show) updateStructureUI();
++        }
++        function getSelectedSpan() {
++            const state = currentDocument(), sel = selectedStructure;
++            if (!state || !sel || sel.fileName !== state.fileName) return null;
++            const spans = tokenizeSourceSpans(state.source);
++            return spans && spans[sel.index] ? { ...spans[sel.index], index: sel.index, state } : null;
++        }
++        function currentSelectedKind() {
++            const span = getSelectedSpan();
++            return span ? span.token.type : null;
++        }
++        function bindStructureSelection(view) {
++            view.addEventListener('click', event => {
++                if (event.target.closest('button,select')) return;
++                const wrap = event.target.closest('.source-block');
++                if (!wrap) return;
++                const wrappers = Array.from(view.querySelectorAll(':scope > .source-block'));
++                const i = wrappers.indexOf(wrap);
++                if (i < 0) return;
++                selectStructureBlock(i, event.target.closest('blockquote > p'));
++            });
++            view.addEventListener('focusin', event => {
++                const wrap = event.target.closest('.source-block');
++                if (!wrap) return;
++                const i = Array.from(view.querySelectorAll(':scope > .source-block')).indexOf(wrap);
++                if (i >= 0) selectStructureBlock(i, event.target.closest('blockquote > p'));
++            });
++        }
++        function selectStructureBlock(index, paragraph) {
++            const view = document.getElementById('markdown-view');
++            const blocks = Array.from(view.querySelectorAll(':scope > .source-block'));
++            const block = blocks[index];
++            if (!block) return;
++            blocks.forEach(e => e.classList.remove('is-current'));
++            view.querySelectorAll('blockquote > p.is-current-paragraph').forEach(e => e.classList.remove('is-current-paragraph'));
++            block.classList.add('is-current');
++            if (paragraph) paragraph.classList.add('is-current-paragraph');
++            const state = currentDocument();
++            selectedStructure = { index, fileName: state.fileName,
++                paragraph: paragraph ? Array.from(paragraph.parentElement.children).indexOf(paragraph) : null };
++            updateStructureUI();
++        }
++        function activateSelectedPosition(pos, openPanel = false) {
++            const state = currentDocument(), spans = state && tokenizeSourceSpans(state.source);
++            if (!spans || !spans.length) return;
++            let i = spans.findIndex(s => s.start <= pos && pos < s.end);
++            if (i < 0) i = spans.findIndex(s => s.start >= pos);
++            if (i < 0) i = spans.length - 1;
++            selectStructureBlock(i, null);
++            if (openPanel) toggleStructurePanel(true);
++        }
++        function updateStructureUI() {
++            const span = getSelectedSpan();
++            const label = spSelected('spLocation');
++            const active = span ? span.token : null;
++            spSelected('spDeleteCard').disabled = !active || active.type !== 'blockquote';
++            spSelected('spApplyCard').disabled = !active || active.type !== 'blockquote';
++            spSelected('spUpdateHeading').disabled = !active || active.type !== 'heading';
++            const tone = spSelected('spTone'), kind = spSelected('spKind');
++            if (!active) {
++                label.textContent = 'انقر على عنوان أو بطاقة أو فقرة لتحديد موضع الإدراج، أو أضف بطاقة في نهاية الملف.';
++                return;
++            }
++            const breadcrumbs = [];
++            const spans = tokenizeSourceSpans(span.state.source);
++            for (let i = 0; i < span.index; i++) {
++                const tok = spans[i].token;
++                if (tok.type === 'heading') {
++                    const short = (tok.text || '').slice(0, 42);
++                    breadcrumbs[tok.depth-1] = short;
++                    breadcrumbs.length = tok.depth;
++                }
++            }
++            const caption = active.type === 'blockquote' ? 'بطاقة إلقاء' : active.type === 'heading' ? 'عنوان' : 'مقطع';
++            label.textContent = `${breadcrumbs.filter(Boolean).join(' ← ') || 'بداية المستند'}  ←  ${caption} (${span.index+1})`;
++            if (active.type === 'heading') spSelected('spHeadingLevel').value = String(active.depth);
++            if (active.type === 'blockquote') {
++                const match = active.raw.match(/🎙️\s*النبرة:\s*([^*\r\n]+)/);
++                if (match) {
++                    const parts = match[1].split(/\s*[·•|]\s*النوع:\s*/);
++                    if (Array.from(tone.options).some(o => o.value === parts[0].trim())) tone.value = parts[0].trim();
++                    if (parts[1] && Array.from(kind.options).some(o => o.value === parts[1].trim())) kind.value = parts[1].trim();
++                    else kind.value = 'نص';
++                }
++            }
++        }
++        function patchSourceRange(start, end, replacement, focusAt = null, focusText = null) {
++            const state = currentDocument();
++            if (!state || start < 0 || end < start || end > state.source.length) return false;
++            const modified = state.source.slice(0,start) + replacement + state.source.slice(end);
++            if (modified === state.source) return false;
++            commitSourceEdit(state, modified);
++            const item = PROJECT_FILES_REGISTRY[currentActiveIndex];
++            renderFormattedDocument(item, state.source, { preserveScroll:true,
++                selectAt: focusAt === null ? start : focusAt });
++            if (focusText) {
++                const wrap = document.querySelector('#markdown-view > .source-block.is-current');
++                const candidates = Array.from(wrap?.querySelectorAll('.md-inline-edit') || []);
++                const editEl = candidates.find(el => el.textContent.includes(focusText));
++                if (editEl) {
++                    const para = editEl.closest('blockquote > p');
++                    if (para) selectStructureBlock(selectedStructure.index, para);
++                    editEl.focus({preventScroll:true});
++                    // النص الإرشادي يُحدّد مباشرة ليُستبدل بالكتابة بلا حذف يدوي.
++                    const range = document.createRange(); range.selectNodeContents(editEl);
++                    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
++                }
++            }
++            return true;
++        }
++        function newCardSource() {
++            const kind = spSelected('spKind').value, tone = spSelected('spTone').value;
++            return `> **🎙️ النبرة: ${tone} · النوع: ${kind}**\n>\n> اكتب النص هنا\n`;
++        }
++        function insertNewCard(before) {
++            const state = currentDocument(); if (!state) { showToast('اختر ملفًا أولًا'); return; }
++            const span = getSelectedSpan();
++            const position = span ? (before ? span.start : span.end) : state.source.length;
++            const prev = state.source.slice(0, position);
++            const next = state.source.slice(position);
++            const lead = prev && !prev.endsWith('\n\n') ? (prev.endsWith('\n') ? '\n' : '\n\n') : '';
++            const suffix = next && !next.startsWith('\n') ? '\n' : '';
++            const content = lead + newCardSource() + '\n' + suffix;
++            patchSourceRange(position, position, content, position + lead.length, 'اكتب النص هنا');
++            showToast('أُضيفت بطاقة: اكتب النص مباشرة مكان التحديد');
++        }
++        function deleteSelectedCard() {
++            const span = getSelectedSpan();
++            if (!span || span.token.type !== 'blockquote') return showToast('حدد بطاقة أولًا');
++            if (!confirm('حذف هذه البطاقة وجميع النصوص الموجودة داخلها؟')) return;
++            patchSourceRange(span.start, span.end, '', Math.max(0, span.start-1));
++            showToast('حُذفت البطاقة من المسودة؛ يمكنك استرجاع الأصل من ملفك المحفوظ');
++        }
++        function changeCardMetadata() {
++            const span = getSelectedSpan();
++            if (!span || span.token.type !== 'blockquote') return;
++            const kind = spSelected('spKind').value, tone = spSelected('spTone').value;
++            const raw = span.token.raw, newHeader = `> **🎙️ النبرة: ${tone} · النوع: ${kind}**`;
++            let updated;
++            const pattern = /^([ \t]*>\s*)\*\*🎙️\s*النبرة:[^\n]*\*\*/m;
++            if (pattern.test(raw)) updated = raw.replace(pattern, newHeader);
++            else updated = newHeader + '\n>\n' + raw;
++            if (patchSourceRange(span.start, span.end, updated, span.start)) showToast('تم تحديث نوع البطاقة ونبرتها');
++        }
++        function insertNewHeading() {
++            const state = currentDocument(); if (!state) return showToast('اختر ملفًا أولًا');
++            const span = getSelectedSpan();
++            const where = span ? span.end : state.source.length;
++            const level = Number(spSelected('spHeadingLevel').value);
++            const before = state.source.slice(0, where);
++            const lead = before && !before.endsWith('\n\n') ? (before.endsWith('\n') ? '\n' : '\n\n') : '';
++            patchSourceRange(where, where, `${lead}${'#'.repeat(level)} عنوان جديد\n\n`, where+lead.length);
++        }
++        function changeHeadingLevel() {
++            const span = getSelectedSpan();
++            if (!span || span.token.type !== 'heading') return showToast('انقر على عنوان أولًا');
++            const level = Number(spSelected('spHeadingLevel').value), raw = span.token.raw;
++            const match = raw.match(/^(\s*)(#{1,6})\s+/);
++            const updated = match ? raw.replace(/^(\s*)#{1,6}\s+/, `$1${'#'.repeat(level)} `) : '#'.repeat(level)+' '+raw;
++            if (patchSourceRange(span.start,span.end,updated,span.start)) showToast('تم تحديث مستوى العنوان والفهرس');
++        }
++        function insertedAtLineEnd(span, mode, inQuote, caretPosition, atCaret = false) {
++            const source = span.state.source;
++            let position = atCaret ? caretPosition : source.indexOf('\n', caretPosition);
++            if (position < 0) position = source.length;
++            if (!atCaret && position >= span.end) position = Math.min(source.length,span.end);
++            // عند تقسيم السطر من منتصفه يُنقل بقية الكلام كما هو دون إضافة نص وهمي.
++            const tailOfLine = source.slice(position, source.indexOf('\n',position) >= 0 ? source.indexOf('\n',position) : source.length);
++            const hasTail = atCaret && !!tailOfLine.trim();
++            const blank = inQuote ? '> ' : '';
++            let insertion, marker = null;
++            if (mode === 'line') {
++                marker = hasTail ? null : 'سطر جديد';
++                insertion = '\n' + blank + (marker || '');
++            } else if (mode === 'paragraph') {
++                marker = hasTail ? null : 'فقرة جديدة';
++                insertion = (inQuote ? '\n>\n> ' : '\n\n') + (marker || '') + (hasTail ? '' : (inQuote ? '\n>' : '\n'));
++            } else if (mode === 'divider') {
++                insertion = inQuote ? '\n>\n> ---\n>\n> ' : '\n\n---\n\n';
++            } else insertion = '\n\n---\n\n';
++            return { position, insertion, marker };
++        }
++        function insertStructuralLine(mode, originatingElement = null) {
++            const state = currentDocument(); if (!state) return showToast('اختر ملفًا أولًا');
++            const span = getSelectedSpan();
++            if (!span) return showToast('اختر موضعًا في النص أولًا');
++            if (mode === 'section') {
++                const pos = span.end;
++                return patchSourceRange(pos,pos, '\n\n---\n\n', pos+3);
++            }
++            if (['code','table','html'].includes(span.token.type)) {
++                showToast('اختر فقرة عادية أو بطاقة، لا جدولًا أو كتلة كود'); return;
++            }
++            const inQuote = span.token.type === 'blockquote';
++            let caretPosition = span.start;
++            let selectedEl = originatingElement;
++            if (!selectedEl) {
++                const wrap = document.querySelectorAll('#markdown-view > .source-block')[span.index];
++                const activeP = wrap?.querySelector('p.is-current-paragraph');
++                const bodyPs = Array.from(wrap?.querySelectorAll('blockquote > p:not(:first-child)') || []);
++                const targetP = activeP && !activeP.matches('blockquote > p:first-child') ? activeP : bodyPs.at(-1);
++                selectedEl = Array.from(targetP?.querySelectorAll('.md-inline-edit') || []).at(-1)
++                    || wrap?.querySelector('.md-inline-edit');
++            }
++            if (selectedEl) {
++                const editEntry = visualEditEntries.find(e => e.el === selectedEl || selectedEl.contains(e.el));
++                if (editEntry) {
++                    caretPosition = editEntry.end;
++                    if (originatingElement) {
++                        const sel = window.getSelection();
++                        if (sel && sel.rangeCount && selectedEl.contains(sel.anchorNode)) {
++                            const rng = sel.getRangeAt(0).cloneRange();
++                            const startRange = document.createRange();
++                            startRange.selectNodeContents(selectedEl);
++                            startRange.setEnd(rng.startContainer, rng.startOffset);
++                            const off = startRange.toString().length;
++                            caretPosition = editEntry.start + rawIndexForDisplayed(editEntry.raw, off);
++                        }
++                    }
++                }
++            }
++            if (caretPosition === span.start) caretPosition = span.end > span.start ? span.end - 1 : span.start;
++            const {position,insertion,marker} = insertedAtLineEnd(span,mode,inQuote,caretPosition,!!originatingElement);
++            const ok = patchSourceRange(position,position,insertion,position + insertion.length-1,marker);
++            if (ok) showToast(mode==='line' ? 'أُضيف سطر داخل الفقرة' : mode==='paragraph' ? 'أُضيفت فقرة مستقلة' : 'أُضيف فاصل');
+         }
+ 
+         /* =========================================================

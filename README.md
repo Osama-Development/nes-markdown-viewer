@@ -20,3 +20,13 @@ records and can have different authors, timestamps and SHAs from local preparati
 
 See `ARCHITECTURE.md`, `FUNCTIONS.md`, `LIMITATIONS.md`, and `VERIFICATION.md`.
 `MARKED-LICENSE.txt` covers Marked only; no application license was inferred.
+
+
+## دليل الزائر والأدلة
+
+- [التشغيل والاستخدام والحفظ والتصدير](RUNBOOK.md)
+- [تاريخ اللقطات والإصدارات](ARCHIVE_HISTORY.md)
+- [فهرس الدوال بنطاقات الأسطر](FUNCTION_LINE_INDEX.json)
+- [فهرس الفروق السطرية الخمسة](LINE_DIFF_INDEX.json)
+
+هذه إضافات توثيق حالية؛ تظل Tags التاريخية ثابتة مع وثائق حالتها الأصلية. لم تُجر اختبارات تشغيل؛ راجع القيود قبل استخدام Markdown غير موثوق.

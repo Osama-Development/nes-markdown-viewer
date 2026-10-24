@@ -1,0 +1,566 @@
+--- NES_EDU_Markdown_Viewer_Final.html
++++ NES_EDU_Markdown_Viewer_Visual_Edit_Final.html
+@@ -3184,8 +3184,11 @@
+             transition: transform var(--transition-smooth);
+         }
+         .top-header-wrapper.header-hidden {
+-            transform: translateY(-100%);
+-        }
++            /* إلغاء ارتفاع الهيدر فعليًا لتصعد القراءة والفهرس إلى أعلى الشاشة. */
++            height: 0 !important;
++            transform: none;
++        }
++        .top-header-wrapper.header-hidden .app-header { display: none; }
+ 
+         .app-header {
+             background: var(--surface-card);
+@@ -3415,12 +3418,13 @@
+             border-radius: var(--radius-lg);
+             box-shadow: var(--shadow-card);
+             position: sticky;
+-            top: 110px;
+-            max-height: calc(100vh - 128px);
++            top: var(--toc-top, 110px);
++            max-height: calc(100dvh - var(--toc-top, 110px) - 14px);
+             display: flex;
+             flex-direction: column;
+             overflow: hidden;
+-            transition: opacity var(--transition-smooth), transform var(--transition-smooth);
++            transition: opacity var(--transition-smooth), transform var(--transition-smooth),
++                        top var(--transition-smooth), max-height var(--transition-smooth);
+         }
+         .workspace-grid.sidebar-collapsed .toc-sidebar {
+             opacity: 0;
+@@ -3430,9 +3434,10 @@
+ 
+         /* زر طي وتوسيع الفهرس الجانبي العائم */
+         .toggle-sidebar-float-btn {
+-            position: absolute;
+-            top: 24px;
+-            right: calc(var(--sidebar-w) + 6px);
++            /* ثابت في إطار العرض: يظل ظاهرًا أثناء تمرير وثيقة طويلة. */
++            position: fixed;
++            top: calc(var(--toc-top, 110px) + 12px);
++            right: calc(max(0px, (100vw - 1400px) / 2) + var(--sidebar-w) + 7px);
+             width: 32px;
+             height: 32px;
+             background: var(--surface-card);
+@@ -3959,58 +3964,31 @@
+         .draft-state.is-dirty { color: var(--nes-amber); background: var(--nes-amber-bg); border-color: var(--nes-amber-border); }
+         .draft-state.is-persisted { color: var(--nes-teal); }
+         .draft-state.is-error { color: var(--nes-rose); border-color: var(--nes-rose-border); }
++        /* التحرير المباشر للنص المرئي مع بقاء Markdown الأصلي مصدر الحقيقة. */
+         .source-block { position: relative; min-width: 0; }
+-        .source-block > :first-child:not(.source-pencil):not(.source-inline-editor) { overflow-wrap: anywhere; }
+-        .source-pencil {
+-            position: absolute; left: 6px; top: 7px; z-index: 3;
+-            width: 29px; height: 29px; border-radius: 8px;
+-            border: 1px solid var(--border-medium);
+-            background: var(--surface-card); color: var(--nes-purple);
+-            font-size: .75rem; cursor: pointer; opacity: 0;
+-            transition: opacity .16s ease; display: inline-flex;
+-            align-items: center; justify-content: center;
+-        }
+-        .source-block:hover > .source-pencil,
+-        .source-pencil:focus-visible, .source-block.editing > .source-pencil { opacity: 1; }
+-        .source-pencil:hover { background: var(--nes-purple-bg); }
+-        .source-inline-editor {
+-            clear: both; direction: rtl; border: 1px solid var(--nes-purple-border);
+-            background: var(--surface-sec); border-radius: 10px;
+-            margin: 6px 0 19px; padding: 12px;
+-            box-shadow: 0 8px 22px rgba(15,23,42,.07);
+-        }
+-        .source-editor-help { font-size: .75rem; color: var(--text-muted); margin-bottom: 8px; line-height: 1.65; }
+-        .source-editor-input {
+-            box-sizing: border-box; display: block; width: 100%; min-height: 110px;
+-            resize: vertical; padding: 12px; outline: none;
+-            border: 1.5px solid var(--border-medium); border-radius: 8px;
+-            background: var(--surface-card); color: var(--text-body);
+-            font-family: ui-monospace, 'Cairo', monospace;
+-            font-size: .91rem; line-height: 1.75;
+-            text-align: right; white-space: pre; overflow: auto;
+-        }
+-        .source-editor-input:focus { border-color: var(--nes-purple); }
+-        .source-editor-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+-        .source-editor-actions button {
+-            font: 800 .77rem 'Cairo', sans-serif; border: 1px solid var(--border-medium);
+-            border-radius: 8px; background: var(--surface-card); color: var(--text-body);
+-            padding: 6px 14px; cursor: pointer;
+-        }
+-        .source-editor-actions .source-apply {
+-            color: white; border: 0; background: linear-gradient(135deg,#6d28d9,#2563eb);
+-        }
+-        .source-editor-actions button:hover { filter: brightness(.94); }
+-        /* إبقاء الأيقونة خارج النص لتجنب دخولها في الفهرس أو النسخ */
+-        .markdown-content .source-block h1, .markdown-content .source-block h2,
+-        .markdown-content .source-block h3 { padding-left: 42px; }
+-        .markdown-content .source-block blockquote { padding-left: 43px; }
+-        .markdown-content .source-block > p { padding-left: 35px; }
++        .source-block > :first-child { overflow-wrap: anywhere; }
++        .markdown-content .md-inline-edit {
++            display: inline; color: inherit; font: inherit; letter-spacing: inherit;
++            white-space: inherit; cursor: text; outline: none;
++            border-radius: 2px; -webkit-user-select: text; user-select: text;
++            overflow-wrap: anywhere;
++        }
++        .markdown-content .md-inline-edit:focus {
++            outline: none;
++            box-shadow: inset 0 -2px 0 var(--nes-purple-border);
++            background: rgba(109,40,217,.035);
++        }
+         .markdown-content .source-block pre { max-width: 100%; overflow: auto; }
+         .markdown-content .source-block .table-wrap { max-width: 100%; }
+-        /* إلغاء تحرير HTML الغني؛ يجري التعديل في المصدر الأصلي فقط */
+-        .markdown-content [contenteditable="true"] { outline: none; }
++        .markdown-content .stage-cue-box .md-inline-edit { color: inherit; }
++        .markdown-content .source-block a .md-inline-edit { cursor: text; }
++        .source-edit-notice {
++            margin: 8px 0 16px; padding: 9px 12px;
++            color: var(--nes-rose); border: 1px solid var(--nes-rose-border);
++            background: var(--nes-rose-bg); border-radius: 8px; font-size: .79rem;
++        }
+         @media (pointer: coarse) {
+-            .source-pencil { opacity: .68; width: 32px; height: 32px; }
++            .markdown-content .md-inline-edit { min-height: 1em; }
+         }
+         @media (max-width: 980px) {
+             .workspace-grid, .workspace-grid.sidebar-collapsed {
+@@ -4056,22 +4034,20 @@
+             .viewer-meta-bar { padding: 8px 10px; }
+             .active-file-tag { max-width: 100%; font-size: .68rem; overflow-wrap: anywhere; }
+             .markdown-content { padding: 13px 10px 75px; overflow-wrap: anywhere; }
+-            .markdown-content h1 { font-size: 1.17rem; padding: 12px 12px 12px 38px; }
++            .markdown-content h1 { font-size: 1.17rem; padding: 12px; }
+             .markdown-content h2 { font-size: 1.01rem; }
+             .markdown-content h3 { font-size: .96rem; max-width: 100%; }
+             .markdown-content blockquote { margin: 10px 0 12px; padding: 12px 11px; }
+-            .markdown-content .source-block blockquote { padding-left: 37px; }
++
+             .markdown-content p, .markdown-content blockquote > p { line-height: 1.77; }
+-            .source-pencil { left: 4px; top: 6px; }
+-            .source-inline-editor { padding: 8px; }
+-            .source-editor-input { font-size: .82rem; }
++
+             .viewer-footer-nav { padding: 10px 8px; flex-wrap: wrap; }
+             .floating-action-dock { padding: 5px 6px; gap: 4px; }
+             .floating-btn { width: 31px; height: 31px; }
+             .btn-download-export { padding: 6px 8px; font-size: .68rem; }
+         }
+         @media print {
+-            .source-pencil, .source-inline-editor, .floating-action-dock, .toc-shade, .draft-state,
++            .floating-action-dock, .toc-shade, .draft-state,
+             .toggle-sidebar-float-btn, .top-header-wrapper { display: none !important; }
+             .workspace-grid, .workspace-grid.sidebar-collapsed { display: block; margin: 0; padding: 0; }
+             .toc-sidebar { display: none !important; }
+@@ -4269,10 +4245,24 @@
+             const workspaceGrid = document.getElementById('workspaceGrid');
+             const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+ 
+-            // طي / إظهار الهيدر
++            // طي / إظهار الهيدر مع تحرير مساحته الرأسية وتحديث مرساة الفهرس.
++            const syncHeaderLayout = () => {
++                const hidden = headerWrapper.classList.contains('header-hidden');
++                document.body.classList.toggle('header-is-hidden', hidden);
++                const headerHeight = hidden ? 0 : headerWrapper.getBoundingClientRect().height;
++                document.documentElement.style.setProperty('--toc-top',
++                    `${hidden ? 10 : Math.max(12, Math.round(headerHeight + 12))}px`);
++            };
+             toggleHeaderBtn.addEventListener('click', () => {
+                 headerWrapper.classList.toggle('header-hidden');
++                syncHeaderLayout();
+             });
++            window.addEventListener('resize', syncHeaderLayout);
++            if (window.ResizeObserver) {
++                const headerObserver = new ResizeObserver(syncHeaderLayout);
++                headerObserver.observe(headerWrapper);
++            }
++            syncHeaderLayout();
+ 
+             // طي / إظهار الفهرس الجانبي
+             toggleSidebarBtn.addEventListener('click', () => {
+@@ -4347,11 +4337,7 @@
+             if (isNaN(idx) || !PROJECT_FILES_REGISTRY[idx]) return;
+ 
+             const fileObj = PROJECT_FILES_REGISTRY[idx];
+-            if (idx !== currentActiveIndex && pendingSourceEditor()) {
+-                showToast('لديك تعديل مفتوح لم يُطبّق؛ طبّقه أو ألغِه قبل الانتقال');
+-                document.getElementById('file-select').value = currentActiveIndex;
+-                return;
+-            }
++            flushDocumentSave();
+             currentActiveIndex = idx;
+ 
+             document.getElementById('file-select').value = idx;
+@@ -4491,10 +4477,10 @@
+             const dirty = state.source !== state.exported;
+             if (dirty) {
+                 chip.classList.add('is-dirty');
+-                chip.textContent = state.autosaved
+-                    ? '● تعديلات غير مُصدّرة • مسودة محفوظة في المتصفح'
+-                    : '● تعديلات غير مُصدّرة • الحفظ المحلي غير متاح';
+-                if (!state.autosaved) chip.classList.add('is-error');
++                chip.textContent = state.savePending ? '● تعديلات غير مُصدّرة • جارٍ حفظ المسودة' :
++                    (state.autosaved ? '● تعديلات غير مُصدّرة • مسودة محفوظة في المتصفح'
++                    : '● تعديلات غير مُصدّرة • الحفظ المحلي غير متاح');
++                if (!state.autosaved && !state.savePending) chip.classList.add('is-error');
+             } else {
+                 chip.classList.add('is-persisted');
+                 chip.textContent = state.source !== state.original
+@@ -4512,18 +4498,34 @@
+                               : 'تم حفظ التعديل في الذاكرة فقط؛ يُرجى تنزيل ملف MD');
+             return true;
+         }
++        function commitVisualEdit(state, newSource) {
++            if (state.source === newSource) return;
++            state.source = newSource;
++            state.savePending = true;
++            fileContentCache[state.fileName] = newSource;
++            updateDraftStatus(state);
++            clearTimeout(inlineSaveTimer);
++            inlineSaveTimer = setTimeout(flushDocumentSave, 280);
++        }
+         function currentDocument() {
+             const item = PROJECT_FILES_REGISTRY[currentActiveIndex];
+             return item ? documentStates.get(item.fileName) : null;
+         }
+-        function pendingSourceEditor() {
+-            return Array.from(document.querySelectorAll('.source-editor-input')).some(input =>
+-                input.value !== input.dataset.initialSource);
++        let inlineSaveTimer = null;
++        function flushDocumentSave() {
++            if (inlineSaveTimer) { clearTimeout(inlineSaveTimer); inlineSaveTimer = null; }
++            documentStates.forEach(state => {
++                if (state.savePending) {
++                    persistDocument(state);
++                    state.savePending = false;
++                }
++            });
++            updateDraftStatus(currentDocument());
+         }
+         window.addEventListener('beforeunload', (event) => {
+-            if (pendingSourceEditor() || [...documentStates.values()].some(d => d.source !== d.exported)) {
+-                event.preventDefault();
+-                event.returnValue = '';
++            flushDocumentSave();
++            if ([...documentStates.values()].some(d => d.source !== d.exported)) {
++                event.preventDefault(); event.returnValue = '';
+             }
+         });
+ 
+@@ -4669,19 +4671,17 @@
+         }
+ 
+         /* =========================================================
+-           8. محرر محلي آمن لمصدر مقطع Markdown (لا تحويل عكسي من HTML)
++           8. تحرير بصري مباشر مرتبط بمقاطع النص الأصلية حرفيًا
+            ========================================================= */
+         function tokenizeSourceSpans(source) {
+             const tokens = marked.lexer(source).filter(t => t.type !== 'space' && t.type !== 'def');
+-            let cursor = 0;
+-            const spans = [];
++            let cursor = 0, spans = [];
+             for (const token of tokens) {
+                 if (typeof token.raw !== 'string' || !token.raw.length) return null;
+                 const start = source.indexOf(token.raw, cursor);
+                 if (start < 0) return null;
+-                const end = start + token.raw.length;
+-                spans.push({ start, end, token });
+-                cursor = end;
++                spans.push({ start, end: start + token.raw.length, token });
++                cursor = start + token.raw.length;
+             }
+             return spans;
+         }
+@@ -4700,136 +4700,170 @@
+                 default: return false;
+             }
+         }
++
++        // كل قطعة نص مرئية تتطابق مع نطاقها داخل ملف Markdown؛ الرموز المخفية لا تُمس.
++        let visualEditEntries = [];
++        function encodeInsertedText(value) {
++            return value.replace(/\\/g, '\\\\').replace(/([*_`\[\]<>|#])/g, '\\$1')
++                .replace(/\r?\n/g, ' ');
++        }
++        function rawIndexForDisplayed(raw, visualOffset) {
++            let r = 0, v = 0;
++            const escaped = '\\`*_{}[]()>#+-.!|~';
++            while (r < raw.length && v < visualOffset) {
++                if (raw[r] === '\\' && r + 1 < raw.length && escaped.includes(raw[r + 1])) r += 2;
++                else r++;
++                v++;
++            }
++            return r;
++        }
++        function mapEditableLeaves(node, start, end, state) {
++            let cursor = 0, mapped = 0;
++            const sourceSlice = state.source.slice(start, end);
++            const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
++            const leaves = [];
++            while (walker.nextNode()) leaves.push(walker.currentNode);
++            for (const leaf of leaves) {
++                const display = leaf.nodeValue;
++                if (!display || !display.trim() || !leaf.parentNode) continue;
++                const originalOffset = sourceSlice.indexOf(display, cursor);
++                if (originalOffset < 0) continue; // لا نحرر تعبيرًا لا نستطيع مطابقته بمصدره بأمان.
++                cursor = originalOffset + display.length;
++                const editable = document.createElement('span');
++                editable.className = 'md-inline-edit';
++                editable.setAttribute('contenteditable', 'plaintext-only');
++                editable.setAttribute('role', 'textbox');
++                editable.setAttribute('aria-label', 'تعديل النص المعروض مباشرة');
++                editable.spellcheck = false;
++                editable.textContent = display;
++                leaf.parentNode.replaceChild(editable, leaf);
++                const entry = { el: editable, start: start + originalOffset,
++                    end: start + originalOffset + display.length, visual: display, raw: display };
++                visualEditEntries.push(entry);
++                bindVisualEditor(entry, state);
++                mapped++;
++            }
++            return mapped;
++        }
++        function bindVisualEditor(entry, state) {
++            const el = entry.el;
++            const getSelectionWithin = () => {
++                const selection = window.getSelection();
++                if (!selection || !selection.rangeCount) return true;
++                const range = selection.getRangeAt(0);
++                return el.contains(range.startContainer) && el.contains(range.endContainer);
++            };
++            el.addEventListener('beforeinput', event => {
++                // تحرير النص في نفس نطاقه فقط: يمنع حذف البنية أو تنسيق العلامات المجاورة.
++                if (!getSelectionWithin()) {
++                    event.preventDefault();
++                    showToast('للحفاظ على التنسيق، عدّل جملة واحدة في المرة الواحدة');
++                    return;
++                }
++                if (event.inputType === 'insertParagraph' || event.inputType === 'insertLineBreak' ||
++                    event.inputType === 'formatBold' || event.inputType === 'formatItalic' ||
++                    event.inputType === 'formatUnderline') event.preventDefault();
++            });
++            el.addEventListener('keydown', event => {
++                if (event.key === 'Enter') { event.preventDefault(); el.blur(); }
++                if ((event.ctrlKey || event.metaKey) && ['b','i','u'].includes(event.key.toLowerCase())) {
++                    event.preventDefault();
++                }
++            });
++            el.addEventListener('paste', event => {
++                event.preventDefault();
++                const content = (event.clipboardData || window.clipboardData)
++                    ?.getData('text/plain')?.replace(/\r?\n/g, ' ') || '';
++                document.execCommand('insertText', false, content);
++            });
++            el.addEventListener('input', () => {
++                if (currentDocument() !== state) return;
++                const now = el.textContent.replace(/\u00a0/g, ' ');
++                if (now === entry.visual) return;
++                const old = entry.visual;
++                let prefix = 0;
++                while (prefix < old.length && prefix < now.length && old[prefix] === now[prefix]) prefix++;
++                let suffix = 0;
++                while (suffix < old.length - prefix && suffix < now.length - prefix &&
++                    old[old.length - 1 - suffix] === now[now.length - 1 - suffix]) suffix++;
++                const offsetA = rawIndexForDisplayed(entry.raw, prefix);
++                const offsetB = rawIndexForDisplayed(entry.raw, old.length - suffix);
++                const inserted = encodeInsertedText(now.slice(prefix, now.length - suffix));
++                const replacement = entry.raw.slice(0, offsetA) + inserted + entry.raw.slice(offsetB);
++                const originalCurrent = state.source.slice(entry.start, entry.end);
++                if (originalCurrent !== entry.raw) {
++                    // تعارض نطاق: لا نسمح بتصدير نسخة تفسد النص بصمت.
++                    el.textContent = entry.visual;
++                    showToast('تغير موضع هذا النص؛ أعد فتح الملف قبل التعديل');
++                    return;
++                }
++                const diff = replacement.length - entry.raw.length;
++                const changedSource = state.source.slice(0, entry.start) + replacement + state.source.slice(entry.end);
++                const priorEnd = entry.end;
++                entry.end += diff;
++                entry.raw = replacement;
++                entry.visual = now;
++                for (const other of visualEditEntries) {
++                    if (other !== entry && other.start >= priorEnd) {
++                        other.start += diff;
++                        other.end += diff;
++                    }
++                }
++                commitVisualEdit(state, changedSource);
++                const heading = el.closest('h1,h2,h3');
++                if (heading && heading.id) {
++                    const link = document.querySelector('#toc-list a[data-id="' + heading.id + '"]');
++                    if (link) link.textContent = heading.textContent;
++                }
++                const quote = el.closest('blockquote');
++                if (quote && el.closest('blockquote p:first-child strong')) {
++                    const text = quote.querySelector('p:first-child > strong:first-child')?.textContent || '';
++                    quote.classList.remove('tone-question','tone-story','tone-calm','tone-focus',
++                        'tone-reflect','tone-flow','tone-warm');
++                    quote.classList.add(classifyToneClass(text));
++                }
++            });
++            el.addEventListener('blur', () => {
++                if (state.savePending) flushDocumentSave();
++            });
++            // رابط Markdown قابل للتحرير بنقرة عادية؛ Ctrl+Click يظل للفتح.
++            if (el.closest('a')) {
++                el.addEventListener('click', e => {
++                    if (!e.ctrlKey && !e.metaKey) e.preventDefault();
++                });
++            }
++        }
+         function enableInlineEditing(container, fileObj, source, enhancedMd) {
++            visualEditEntries = [];
+             const original = tokenizeSourceSpans(source);
+             const shown = marked.lexer(enhancedMd).filter(t => t.type !== 'space' && t.type !== 'def');
+             const elements = Array.from(container.children);
+-            const safeMapping = original && original.length === shown.length && shown.length === elements.length &&
+-                shown.every((token, i) => nodeMatchesToken(elements[i], token));
+-            if (!safeMapping) {
+-                // عند وجود صيغة Markdown غير نمطية لا نخمن نطاق المقطع؛ نعرض محرر المصدر الكامل.
+-                const btn = document.createElement('button');
+-                btn.type = 'button';
+-                btn.className = 'btn-tool';
+-                btn.textContent = '✎ تحرير مصدر الملف كاملًا (وضع آمن)';
+-                btn.style.margin = '6px 0 16px';
+-                btn.addEventListener('click', () => openWholeFileEditor(container, fileObj));
+-                container.insertBefore(btn, container.firstChild);
++            const safe = original && original.length === shown.length && shown.length === elements.length &&
++                shown.every((token, index) => nodeMatchesToken(elements[index], token));
++            if (!safe) {
++                const warning = document.createElement('p');
++                warning.className = 'source-edit-notice';
++                warning.textContent = 'هذا المستند يحتوي بنية لا يمكن ربطها تلقائيًا بالمصدر بدقة. يمكن قراءته وتصديره دون تغيير، لكن حُجب التعديل لحماية تنسيقه.';
++                container.insertBefore(warning, container.firstChild);
+                 return;
+             }
++            const state = currentDocument();
++            if (!state || state.fileName !== fileObj.fileName) return;
+             original.forEach((span, index) => {
+                 const element = elements[index];
+-                // لا نغيّر المحتوى المنسّق، بل نلفه في غلاف لتوفير زر محرر المصدر.
+                 const wrap = document.createElement('div');
+                 wrap.className = 'source-block';
+                 element.parentNode.insertBefore(wrap, element);
+                 wrap.appendChild(element);
+-                const editBtn = document.createElement('button');
+-                editBtn.type = 'button';
+-                editBtn.className = 'source-pencil';
+-                editBtn.textContent = '✎';
+-                editBtn.title = 'تعديل المصدر الأصلي لهذا المقطع دون إفساد Markdown';
+-                editBtn.setAttribute('aria-label', 'تحرير مصدر هذا المقطع');
+-                editBtn.addEventListener('click', () => openBlockSourceEditor(wrap, fileObj, span));
+-                wrap.appendChild(editBtn);
+-                wrap.addEventListener('dblclick', event => {
+-                    if (event.target.closest('button,textarea,a')) return;
+-                    openBlockSourceEditor(wrap, fileObj, span);
+-                });
++                mapEditableLeaves(element, span.start, span.end, state);
+             });
+-        }
+-        function openBlockSourceEditor(wrap, fileObj, span) {
+-            const current = currentDocument();
+-            if (!current || current.fileName !== fileObj.fileName) return;
+-            if (wrap.classList.contains('editing')) return;
+-            const sourceAtOpen = current.source;
+-            const exactPart = sourceAtOpen.slice(span.start, span.end);
+-            const editor = createSourceEditor(exactPart, (newPart) => {
+-                const latest = currentDocument();
+-                if (latest !== current || latest.source !== sourceAtOpen) {
+-                    alert('تغيّر الملف أثناء التحرير. أعد فتح هذا المقطع لتجنّب استبدال تعديلات أخرى.');
+-                    return false;
+-                }
+-                const changed = commitSourceEdit(current,
+-                    sourceAtOpen.slice(0, span.start) + newPart + sourceAtOpen.slice(span.end));
+-                if (changed) renderFormattedDocument(fileObj, current.source, { preserveScroll: true });
+-                return true;
+-            }, () => { editor.remove(); wrap.classList.remove('editing'); });
+-            wrap.classList.add('editing');
+-            wrap.appendChild(editor);
+-            const input = editor.querySelector('textarea');
+-            input.focus();
+-            input.setSelectionRange(0, 0);
+-        }
+-        function createSourceEditor(value, applyFn, cancelFn) {
+-            const box = document.createElement('div');
+-            box.className = 'source-inline-editor';
+-            const help = document.createElement('div');
+-            help.className = 'source-editor-help';
+-            help.textContent = 'حرّر Markdown الأصلي لهذا المقطع؛ تبقى الرموز (> و ** و # وغيرها) كما هي. لن تتغير بقية أجزاء الملف.';
+-            const input = document.createElement('textarea');
+-            input.className = 'source-editor-input';
+-            input.value = value;
+-            input.dataset.initialSource = value;
+-            input.dir = 'auto';
+-            input.spellcheck = false;
+-            input.style.height = `${Math.max(118, Math.min(420, value.split('\n').length * 26 + 20))}px`;
+-            input.addEventListener('keydown', e => {
+-                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'enter') {
+-                    e.preventDefault(); apply.click();
+-                }
+-                if (e.key === 'Escape') { e.preventDefault(); cancel.click(); }
+-            });
+-            const actions = document.createElement('div');
+-            actions.className = 'source-editor-actions';
+-            const apply = document.createElement('button');
+-            apply.type = 'button';
+-            apply.className = 'source-apply';
+-            apply.textContent = '✓ تطبيق التعديل في المسودة';
+-            apply.addEventListener('click', () => {
+-                if (applyFn(input.value) !== false) {
+-                    if (box.isConnected) box.remove();
+-                }
+-            });
+-            const cancel = document.createElement('button');
+-            cancel.type = 'button';
+-            cancel.textContent = 'إلغاء';
+-            cancel.addEventListener('click', cancelFn);
+-            actions.append(apply, cancel);
+-            box.append(help, input, actions);
+-            return box;
+-        }
+-        function openWholeFileEditor(container, fileObj) {
+-            const state = currentDocument();
+-            if (!state || state.fileName !== fileObj.fileName) return;
+-            if (document.getElementById('whole-markdown-editor')) return;
+-            const before = state.source;
+-            let editor;
+-            editor = createSourceEditor(before, updated => {
+-                if (state.source !== before) {
+-                    alert('تغير المصدر أثناء التحرير؛ يرجى فتح المحرر مجددًا.');
+-                    return false;
+-                }
+-                const changed = commitSourceEdit(state, updated);
+-                if (changed) renderFormattedDocument(fileObj, state.source, { preserveScroll: true });
+-                return true;
+-            }, () => editor.remove());
+-            editor.id = 'whole-markdown-editor';
+-            editor.querySelector('.source-editor-help').textContent = 'محرر مصدر Markdown كامل وآمن: التغييرات التي تكتبها فقط تُعتمد؛ لا تُعاد هندسة الملف من HTML.';
+-            editor.querySelector('textarea').style.height = '65vh';
+-            container.insertBefore(editor, container.firstChild);
+-            editor.querySelector('textarea').focus();
+         }
+ 
+         // تصدير المصدر الفعلي حرفيًا، حتى عند عدم وجود أي تعديل.
+         function exportCurrentMarkdown() {
+             const state = currentDocument();
+             if (!state) { showToast('يرجى اختيار ملف أولًا'); return; }
+-            // لا نصدّر تعديلًا مفتوحًا لم يُطبّق بعد.
+-            if (document.querySelector('.source-inline-editor')) {
+-                showToast('طبّق تعديل المقطع المفتوح أو ألغِه أولًا');
+-                return;
+-            }
++            flushDocumentSave();
+             const exactMarkdown = state.source;
+             const blob = new Blob([exactMarkdown], { type: 'text/markdown;charset=utf-8' });
+             const downloadUrl = URL.createObjectURL(blob);
+@@ -4902,7 +4936,9 @@
+             highlightTOCItem(id);
+             if (window.innerWidth <= 980) document.getElementById('workspaceGrid').classList.add('sidebar-collapsed');
+ 
+-            const y = target.getBoundingClientRect().top + window.pageYOffset - 110;
++            const headerGap = document.getElementById('topHeaderWrapper').classList.contains('header-hidden') ? 24 :
++                (document.getElementById('topHeaderWrapper').getBoundingClientRect().height + 18);
++            const y = target.getBoundingClientRect().top + window.pageYOffset - headerGap;
+             window.scrollTo({ top: y, behavior: 'smooth' });
+ 
+             clearTimeout(scrollResetTimer);

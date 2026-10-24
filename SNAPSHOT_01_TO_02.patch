@@ -1,0 +1,75 @@
+--- docs-viewer.html
++++ docs-viewer-recording.html
+@@ -550,6 +550,41 @@
+             background: var(--nes-purple-bg);
+             padding: 0 5px;
+             border-radius: 4px;
++        }
++
++        /* بطاقات الإلقاء في Markdown: كل > يمثل فكرة مترابطة دون تغيير نص المحاضر */
++        .markdown-content blockquote {
++            margin: 12px 0 14px;
++            padding: 13px 16px;
++            background: var(--surface-sec);
++            border: 1px solid var(--border-light);
++            border-right: 4px solid var(--nes-blue);
++            border-radius: var(--radius-md);
++            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.035);
++            overflow-wrap: anywhere;
++        }
++        .markdown-content blockquote > p {
++            margin: 0;
++            line-height: 1.87;
++        }
++        .markdown-content blockquote > p:first-child:not(:last-child) {
++            margin-bottom: 8px;
++        }
++        .markdown-content blockquote > p:first-child > strong:first-child {
++            display: inline-block;
++            padding: 2px 10px;
++            border-radius: 99px;
++            font-size: 0.75em;
++            font-weight: 900;
++            color: var(--nes-teal);
++            background: var(--nes-teal-bg);
++            border: 1px solid var(--nes-teal-border);
++        }
++        @media (max-width: 640px) {
++            .markdown-content blockquote {
++                padding: 11px 12px;
++                margin: 10px 0 12px;
++            }
+         }
+ 
+         /* صناديق الإشارات التوقيتية للمحاضر [...] */
+@@ -858,6 +893,12 @@
+                 fileName: "07_الربط_والخلاصة_والانتقال.md",
+                 shortLabel: "الملف السابع: الربط والخلاصة والانتقال",
+                 badge: "ملف 07"
++            },
++            {
++                index: 8,
++                fileName: "NES_Section01_Slides_01-07_Smooth_Taizi_V2_Recording.md",
++                shortLabel: "نص الإلقاء المنسق (الشرائح 01–07)",
++                badge: "إلقاء"
+             }
+         ];
+ 
+@@ -1069,7 +1110,7 @@
+             // حساب الإحصاءات (العناوين، إشارات الإلقاء، وقت القراءة المقدر)
+             const headings = viewEl.querySelectorAll('h1, h2, h3');
+             const cues = viewEl.querySelectorAll('.stage-cue-box');
+-            const wordCount = rawMarkdown.trim().split(/\s+/).length;
++            const wordCount = rawMarkdown.replace(/^>\s*\*\*🎙️ النبرة:.*\*\*\s*$/gm, '').trim().split(/\s+/).length;
+             const readMinutes = Math.max(1, Math.round(wordCount / 130));
+ 
+             document.getElementById('stat-h').textContent = headings.length;
+@@ -1148,7 +1189,7 @@
+             initFilesUI();
+             if (window.location.protocol !== 'file:') {
+                 // إذا كان مرفوعًا على السحابة، يفتح الملف الأول تلقائيًا من المجلد
+-                selectFileByIndex(1);
++                selectFileByIndex(8);
+             }
+         });
+     </script>
